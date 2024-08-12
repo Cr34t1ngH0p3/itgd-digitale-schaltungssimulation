@@ -1,6 +1,6 @@
-from PyQt5.QtWidgets import QApplication, QPushButton, QWidget, QLabel,  QVBoxLayout, QHBoxLayout, QGraphicsLineItem
+from PyQt5.QtWidgets import QApplication, QMainWindow, QPushButton, QFrame, QWidget, QLabel,  QVBoxLayout, QHBoxLayout, QGraphicsLineItem
 from PyQt5.QtGui import QPixmap, QColor, QDrag, QPainter, QPen
-from PyQt5.QtCore import Qt, QMimeData, pyqtSlot, QPoint, pyqtSignal,QLineF
+from PyQt5.QtCore import Qt, QMimeData, pyqtSlot, QPoint, pyqtSignal, QLineF, QRect
 
 
 wireList = {}
@@ -49,8 +49,8 @@ class GatterButton(QWidget):
     inputClickEvent = pyqtSignal()
     outputClickEvent = pyqtSignal()
 
-    def __init__(self, parent, label_text, type_label='-', input_wires={}, output_wire=None):
-        super().__init__(parent)
+    def __init__(self, label_text, type_label='-', input_wires={}, output_wire=None, parent=None):
+        super().__init__(label_text, parent)
 
         GatterButton.counter += 1
         self.id = GatterButton.counter
@@ -59,43 +59,10 @@ class GatterButton(QWidget):
         self.outWire = output_wire
         gateList[self.id] = self
 
-        # Main layout for the GatterButton and label
-        main_layout = QVBoxLayout(self)
-
-        # Create the label above the GatterButton
-        self.main_label = QLabel(self.name, self)
-        self.main_label.setAlignment(Qt.AlignCenter)
-
-        # Create a horizontal layout for the two parts of the GatterButton
-        button_layout = QHBoxLayout()
-
-        # Create two labels representing parts of the button
-        self.inputButton = QPushButton('Manage Inputs', self)
-        self.outputButton = QPushButton('Manage Output', self)
-
-        # Add labels to the button layout
-        button_layout.addWidget(self.inputButton)
-        button_layout.addWidget(self.outputButton)
-
-        # Adjust spacing and margins to minimize gap
-        button_layout.setSpacing(0)
-        button_layout.setContentsMargins(0, 0, 0, 0)
-
-        # Style the labels to look like button parts
-        self.inputButton.setStyleSheet("background-color: lightblue; border: none; border-right: 1px solid gray; padding: 10px;")
-        self.outputButton.setStyleSheet("background-color: lightgreen; border: none; padding: 10px;")
-
-        # Add the label and GatterButton to the main layout
-        main_layout.addWidget(self.main_label)
-        main_layout.addLayout(button_layout)
-
-        # Set the layout and fix the size
-        self.setLayout(main_layout)
-        self.setFixedSize(self.sizeHint())
-
-        # Connect label click events to the corresponding slots
-        self.inputButton.clicked.connect(self.inputClickEventHandler)
-        self.outputButton.clicked.connect(self.outputClickEventHandler)
+        self.setFixedSize(100, 50)
+        self.setStyleSheet("background-color: lightblue; border: 1px solid black;")
+        self.start_pos = QPoint(0, 0)
+        self.is_in_drop_area = False
 
     def addInputWire(self, wireId):
         self.inputWireList[wireId] = wireList[wireId]
@@ -112,36 +79,51 @@ class GatterButton(QWidget):
         self.outputClickEvent.emit()
 
     def mouseMoveEvent(self, event):
-        if event.buttons() != Qt.LeftButton:
-            return
-        mimeData = QMimeData()
-        mimeData.setText(self.objectName())
+        if event.buttons() == Qt.LeftButton:
+            drag = QDrag(self)
+            mime_data = QMimeData()
+            mime_data.setText(self.text())
+            drag.setMimeData(mime_data)
 
-        drag = QDrag(self)
-        drag.setMimeData(mimeData)
-        drag.setHotSpot(event.pos() - self.rect().topLeft())
+            pixmap = QPixmap(self.size())
+            self.render(pixmap)
+            drag.setPixmap(pixmap)
 
-        self.parent().startDrag(self, event)
-        dropAction = drag.exec_(Qt.MoveAction)
+            drag.setHotSpot(event.pos() - self.rect().topLeft())
+
+            if self.is_in_drop_area:
+                drag.exec_(Qt.MoveAction)
+            else:
+                drag.exec_(Qt.CopyAction)
 
     def mousePressEvent(self, event):
-        super().mousePressEvent(event)
-        global startingPointWire
         if event.button() == Qt.LeftButton:
-            print(f'{self.inputButton.text()} | {self.outputButton.text()} pressed')
-        if event.button() == Qt.RightButton:
-            if (startingPointWire == None):
-                print(self.inputButton.text())
-                print(self.x())
-                print(self.y())
-                startingPointWire = QPoint(self.x() + self.width(), self.y() + self.height() // 2)
-            else:
-                print('endpint')
-                endPointWire = QPoint(self.x(), self.y() + self.height() // 2)
-                app.addWire(startingPointWire, endPointWire)
-                startingPointWire = None
-                endPointWire = None
-                # TODO warning if same gatter
+            self.start_pos = event.pos()
+        elif event.button() == Qt.RightButton:
+            # Determine if the click was on the input or output side
+            if isinstance(self.parent(), DropArea):
+                if event.pos().x() < self.width() // 2:
+                    # Clicked on the input side
+                    self.parent().label_clicked(self, "input")
+                else:
+                    # Clicked on the output side
+                    self.parent().label_clicked(self, "output")
+    def move(self, pos):
+        super().move(pos - self.start_pos)
+
+    def paintEvent(self, event):
+        super().paintEvent(event)
+        painter = QPainter(self)
+
+        # Draw the division between input and output sides
+        pen = QPen(Qt.black, 2)
+        painter.setPen(pen)
+        mid_x = self.width() // 2
+        painter.drawLine(mid_x, 0, mid_x, self.height())
+
+        # Label the sides (optional)
+        painter.drawText(QRect(0, 0, mid_x, self.height()), Qt.AlignCenter, "IN")
+        painter.drawText(QRect(mid_x, 0, self.width() - mid_x, self.height()), Qt.AlignCenter, "OUT")
 
 class AndButton(GatterButton):
     def __init__(self, parent, name, _out=None, _inList={}):
@@ -255,12 +237,99 @@ class Application(QWidget):
 
         event.accept()
 
+class DropArea(QFrame):
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.setFrameStyle(QFrame.Sunken | QFrame.StyledPanel)
+        self.setAcceptDrops(True)
+        self.setStyleSheet("background-color: lightgray;")
+        self.setFixedSize(400, 400)
+        self.source_label = None  # Track the first selected label (source)
+        self.source_side = None  # Track whether the source is input or output
+        self.lines = []  # Store the lines (connections)
+
+    def dragEnterEvent(self, event):
+        if event.mimeData().hasText():
+            event.acceptProposedAction()
+
+    def dropEvent(self, event):
+        if event.mimeData().hasText():
+            source = event.source()
+            if isinstance(source, GatterButton) and not source.is_in_drop_area:
+                # Create a new label in the drop area only if it's dragged from outside
+                label = GatterButton(event.mimeData().text(), self)
+                label.move(event.pos())
+                label.is_in_drop_area = True
+                label.show()
+            elif isinstance(source, GatterButton) and source.is_in_drop_area:
+                # Move the label within the drop area
+                source.move(event.pos())
+
+            self.update()  # Update the widget to redraw lines
+            event.acceptProposedAction()
+
+    def label_clicked(self, label, side):
+        if self.source_label is None:
+            if side == "output":
+                # Select the first label (source) only if it's the output side
+                self.source_label = label
+                self.source_side = side
+                self.source_label.setStyleSheet("background-color: yellow; border: 1px solid black;")
+        else:
+            if side == "input" and label != self.source_label:
+                # Connect only if the second label's side is input and it's a different label
+                self.draw_line(self.source_label, label)
+                self.source_label.setStyleSheet("background-color: lightblue; border: 1px solid black;")
+                self.source_label = None  # Reset the selection
+                self.source_side = None
+
+    def draw_line(self, source, destination):
+        # Calculate global positions
+        source_pos = source.mapToGlobal(source.rect().center())
+        destination_pos = destination.mapToGlobal(destination.rect().center())
+        # Adjust for input/output sides
+        source_pos.setX(source.mapToGlobal(QPoint(source.width(), source.height() // 2)).x())  # Output side
+        destination_pos.setX(destination.mapToGlobal(QPoint(0, destination.height() // 2)).x())  # Input side
+        # Map global positions to DropArea coordinates
+        source_in_drop = self.mapFromGlobal(source_pos)
+        destination_in_drop = self.mapFromGlobal(destination_pos)
+        line = QLineF(source_in_drop, destination_in_drop)
+        self.lines.append(line)
+        self.update()  # Trigger a repaint to draw the new line
+
+    def paintEvent(self, event):
+        super().paintEvent(event)
+        painter = QPainter(self)
+        pen = QPen(Qt.black, 2)
+        painter.setPen(pen)
+
+        # Draw all stored lines
+        for line in self.lines:
+            painter.drawLine(line)
+
+class MainWindow(QMainWindow):
+    def __init__(self):
+        super().__init__()
+        self.setWindowTitle("Drag and Drop Example with Inputs and Outputs")
+        self.setGeometry(100, 100, 500, 500)
+
+        main_layout = QVBoxLayout()
+
+        self.draggable_label = GatterButton("Hi", self)
+        main_layout.addWidget(self.draggable_label)
+
+        self.drop_area = DropArea(self)
+        main_layout.addWidget(self.drop_area)
+
+        container = QWidget()
+        container.setLayout(main_layout)
+        self.setCentralWidget(container)
 
 def main():
     app = QApplication(sys.argv)
-    ex = Application()
+    ex = MainWindow()
     ex.show()
-    app.exec_()
+    sys.exit(app.exec_())
 
 
 if __name__ == '__main__':
