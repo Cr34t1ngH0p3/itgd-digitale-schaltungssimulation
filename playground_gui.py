@@ -1,16 +1,20 @@
-from PyQt5.QtWidgets import QApplication, QPushButton, QWidget, QLabel,  QVBoxLayout, QHBoxLayout
+from PyQt5.QtWidgets import QApplication, QPushButton, QWidget, QLabel,  QVBoxLayout, QHBoxLayout, QGraphicsLineItem
 from PyQt5.QtGui import QPixmap, QColor, QDrag, QPainter, QPen
-from PyQt5.QtCore import Qt, QMimeData, pyqtSlot, QPoint, pyqtSignal
+from PyQt5.QtCore import Qt, QMimeData, pyqtSlot, QPoint, pyqtSignal,QLineF
 
 
 wireList = {}
 gateList = {}
-
+startingPointWire = None
+endPointWire = None
 class Wire(QWidget):
     counter = 0
 
     def __init__(self, parent, point1, point2, state=0, out_gate_list={}):
         super().__init__(parent)
+        print('created wire')
+        print(point1)
+        print(point2)
         Wire.counter += 1
         self.id = Wire.counter
         self.state = state
@@ -19,11 +23,7 @@ class Wire(QWidget):
 
         self.point1 = point1
         self.point2 = point2
-        painter = QPainter(self)
-        pen = QPen(QColor(0, 0, 255), 2, Qt.SolidLine)
-        painter.setPen(pen)
-        painter.drawLine(self.point1, self.point2)
-        print('created line')
+
 
     def getState(self):
         return self.state
@@ -36,6 +36,12 @@ class Wire(QWidget):
             gate.update()
 
 
+    def paintEvent(self, event):
+        super().paintEvent(event)
+        painter = QPainter(self)
+        pen = QPen(QColor(0, 0, 255), 2, Qt.SolidLine)
+        painter.setPen(pen)
+        painter.drawLine(self.point1, self.point2)
 
 
 class GatterButton(QWidget):
@@ -98,11 +104,11 @@ class GatterButton(QWidget):
         self.inputWireList.pop(wireId)
 
     def inputClickEventHandler(self):
-        print('presed label')
+        print('presed input')
         self.inputClickEvent.emit()
 
     def outputClickEventHandler(self):
-        print('presed label')
+        print('pressed output')
         self.outputClickEvent.emit()
 
     def mouseMoveEvent(self, event):
@@ -120,8 +126,22 @@ class GatterButton(QWidget):
 
     def mousePressEvent(self, event):
         super().mousePressEvent(event)
+        global startingPointWire
         if event.button() == Qt.LeftButton:
             print(f'{self.inputButton.text()} | {self.outputButton.text()} pressed')
+        if event.button() == Qt.RightButton:
+            if (startingPointWire == None):
+                print(self.inputButton.text())
+                print(self.x())
+                print(self.y())
+                startingPointWire = QPoint(self.x() + self.width(), self.y() + self.height() // 2)
+            else:
+                print('endpint')
+                endPointWire = QPoint(self.x(), self.y() + self.height() // 2)
+                app.addWire(startingPointWire, endPointWire)
+                startingPointWire = None
+                endPointWire = None
+                # TODO warning if same gatter
 
 class AndButton(GatterButton):
     def __init__(self, parent, name, _out=None, _inList={}):
@@ -164,6 +184,7 @@ class Application(QWidget):
 
     def initUI(self):
         self.setAcceptDrops(True)
+        main_layout = QVBoxLayout(self)
 
         self.button1 = GatterButton(self,'Part 1', 'Part 2', None, None)
         self.button1.setObjectName('button1')
@@ -179,15 +200,22 @@ class Application(QWidget):
         self.button2.inputClickEvent.connect(lambda: print("Label 1 Clicked"))
         self.button2.outputClickEvent.connect(lambda: print("Label 2 Clicked"))
 #
-        self.point1 = QPoint(50, 50)
-        self.point2 = QPoint(200, 200)
+        point1 = QPoint(50, 50)
+        point2 = QPoint(200, 200)
 
         # Create the widget
-        self.wire = Wire(self, self.point1, self.point2)
+        self.addWire(point1, point2)
 
+        # Set main layout
+        self.setLayout(main_layout)
         self.setGeometry(300, 300, 400, 300)
 
-
+    def addWire(self, start_point, end_point):
+        if self.wire:
+            self.wire.deleteLater()  # Remove the existing wire if any
+        self.wire = Wire(self, start_point, end_point)
+        self.wire.setGeometry(self.rect())
+        self.wire.lower()  # Move the wire behind other widgets
 
     def startDrag(self, widget, event):
         # Create a shadow widget to show where the button will land
