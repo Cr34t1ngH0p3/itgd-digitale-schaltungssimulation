@@ -3,73 +3,31 @@ from PyQt5.QtGui import QPixmap, QColor, QDrag, QPainter, QPen
 from PyQt5.QtCore import Qt, QMimeData, pyqtSlot, QPoint, pyqtSignal
 
 
-wireList = {}
-gateList = {}
-
-class Wire(QWidget):
-    counter = 0
-
-    def __init__(self, point1, point2, state=0, out_gate_list={}, parent=None):
-        super().__init__(parent)
-        Wire.counter += 1
-        self.id = Wire.counter
-        self.state = state
-        self.outputGateList = out_gate_list
-        wireList[self.id] = self
-
-        self.point1 = point1
-        self.point2 = point2
-
-
-    def getState(self):
-        return self.state
-
-    def setState(self, state):
-        self.state = state
-
-    def updateGates(self):
-        for gate in self.outputGateList:
-            gate.update()
-
-    def paintEvent(self, event):
-        super().paintEvent(event)
-        painter = QPainter(self)
-        pen = QPen(QColor(0, 0, 255), 2, Qt.SolidLine)
-        painter.setPen(pen)
-        painter.drawLine(self.point1, self.point2)
 
 
 class GatterButton(QWidget):
-    counter = 0
     inputClickEvent = pyqtSignal()
     outputClickEvent = pyqtSignal()
 
-    def __init__(self, label_text, type_label, input_wires=None, output_wire=None, parent=None):
+    def __init__(self, text1, text2, label_text, parent=None):
         super().__init__(parent)
 
-        GatterButton.counter += 1
-        self.id = GatterButton.counter
-        self.name = label_text
-        self.inputWireList = input_wires
-        self.outWire = output_wire
-        gateList[self.id] = self
-
-        # Main layout for the GatterButton and label
+        # Main layout for the SplitButton and label
         main_layout = QVBoxLayout(self)
 
-        # Create the label above the GatterButton
-        self.main_label = QLabel(self.name, self)
-        self.main_label.setAlignment(Qt.AlignCenter)
+        # Create the label above the SplitButton
+        self.main_label = QLabel(label_text, self)
+        self.main_label.setStyleSheet("background-color: lightgray;")
+        self.main_label.setEnabled(False)  # Make the label non-clickable
 
-        # Create a horizontal layout for the two parts of the GatterButton
+        # Create a horizontal layout for the two parts of the SplitButton
         button_layout = QHBoxLayout()
 
-        # Create two labels representing parts of the button
-        self.inputButton = QPushButton('Manage Inputs', self)
-        self.typeLabel = QLabel(type_label, self)
-        self.outputButton = QPushButton('Manage Output', self)
+        # Create two buttons representing parts of the split button
+        self.inputButton = QPushButton(text1, self)
+        self.outputButton = QPushButton(text2, self)
 
-        # Add labels to the button layout
+        # Add buttons to the button layout
         button_layout.addWidget(self.inputButton)
         button_layout.addWidget(self.outputButton)
 
@@ -77,11 +35,11 @@ class GatterButton(QWidget):
         button_layout.setSpacing(0)
         button_layout.setContentsMargins(0, 0, 0, 0)
 
-        # Style the labels to look like button parts
-        self.inputButton.setStyleSheet("background-color: lightblue; border: none; border-right: 1px solid gray; padding: 10px;")
-        self.outputButton.setStyleSheet("background-color: lightgreen; border: none; padding: 10px;")
+        # Style the buttons to look like button parts
+        self.inputButton.setStyleSheet("background-color: lightblue; border-right: 1px solid gray;")
+        self.outputButton.setStyleSheet("background-color: lightgreen;")
 
-        # Add the label and GatterButton to the main layout
+        # Add the label and SplitButton to the main layout
         main_layout.addWidget(self.main_label)
         main_layout.addLayout(button_layout)
 
@@ -89,22 +47,14 @@ class GatterButton(QWidget):
         self.setLayout(main_layout)
         self.setFixedSize(self.sizeHint())
 
-        # Connect label click events to the corresponding slots
+        # Connect button click events to the corresponding slots
         self.inputButton.clicked.connect(self.inputClickEventHandler)
         self.outputButton.clicked.connect(self.outputClickEventHandler)
 
-    def addInputWire(self, wireId):
-        self.inputWireList[wireId] = wireList[wireId]
-
-    def deleteInputWire(self, wireId):
-        self.inputWireList.pop(wireId)
-
     def inputClickEventHandler(self):
-        print('presed label')
         self.inputClickEvent.emit()
 
     def outputClickEventHandler(self):
-        print('presed label')
         self.outputClickEvent.emit()
 
     def mouseMoveEvent(self, event):
@@ -118,43 +68,9 @@ class GatterButton(QWidget):
         drag.setHotSpot(event.pos() - self.rect().topLeft())
 
         self.parent().startDrag(self, event)
-        dropAction = drag.exec_(Qt.MoveAction)
+        drag.exec_(Qt.MoveAction)
 
-    def mousePressEvent(self, event):
-        super().mousePressEvent(event)
-        if event.button() == Qt.LeftButton:
-            print(f'{self.inputButton.text()} | {self.outputButton.text()} pressed')
 
-class AndButton(GatterButton):
-    def __init__(self, name, _out=None, _inList={}):
-        super().__init__(name, '&')
-        self.out = _out
-        self.inputWireList = _inList
-        self.update()
-        #self.inputButton.text('AND')
-
-    def update(self):
-        for wire in self.inputWireList:
-            if (wire.getState() == 0):
-                self.outWire.setState(0)
-                return
-        if (self.outWire):
-            self.outWire.setState(1)
-
-class OrButton(GatterButton):
-    def __init__(self, _out, _inList, name):
-        super().__init__(name, '&')
-        self.out = _out
-        self.inputWireList = _inList
-        self.update()
-        self.inputButton.text('OR')
-
-    def update(self):
-        for wire in self.inputWireList:
-            if (wire.getState() == 1):
-                self.outWire.setState(1)
-                return
-        self.outWire.setState(0)
 
 class Application(QWidget):
 
@@ -167,10 +83,9 @@ class Application(QWidget):
     def initUI(self):
         self.setAcceptDrops(True)
 
-        self.button1 = GatterButton('Part 1', 'Part 2')
+        self.button1 = GatterButton('Part 1', 'Part 2', 'label')
         self.button1.setObjectName('button1')
         self.button1.move(100, 65)
-        self.button1.show()  # Make sure the widget is shown
 
         self.button1.inputClickEvent.connect(lambda: print("Label 1 Clicked"))
         self.button1.outputClickEvent.connect(lambda: print("Label 2 Clicked"))
