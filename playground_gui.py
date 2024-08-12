@@ -9,7 +9,7 @@ gateList = {}
 class Wire(QWidget):
     counter = 0
 
-    def __init__(self, point1, point2, state=0, out_gate_list={}, parent=None):
+    def __init__(self, parent, point1, point2, state=0, out_gate_list={}):
         super().__init__(parent)
         Wire.counter += 1
         self.id = Wire.counter
@@ -19,7 +19,11 @@ class Wire(QWidget):
 
         self.point1 = point1
         self.point2 = point2
-
+        painter = QPainter(self)
+        pen = QPen(QColor(0, 0, 255), 2, Qt.SolidLine)
+        painter.setPen(pen)
+        painter.drawLine(self.point1, self.point2)
+        print('created line')
 
     def getState(self):
         return self.state
@@ -31,12 +35,7 @@ class Wire(QWidget):
         for gate in self.outputGateList:
             gate.update()
 
-    def paintEvent(self, event):
-        super().paintEvent(event)
-        painter = QPainter(self)
-        pen = QPen(QColor(0, 0, 255), 2, Qt.SolidLine)
-        painter.setPen(pen)
-        painter.drawLine(self.point1, self.point2)
+
 
 
 class GatterButton(QWidget):
@@ -44,7 +43,7 @@ class GatterButton(QWidget):
     inputClickEvent = pyqtSignal()
     outputClickEvent = pyqtSignal()
 
-    def __init__(self, label_text, type_label, input_wires=None, output_wire=None, parent=None):
+    def __init__(self, parent, label_text, type_label='-', input_wires={}, output_wire=None):
         super().__init__(parent)
 
         GatterButton.counter += 1
@@ -66,7 +65,6 @@ class GatterButton(QWidget):
 
         # Create two labels representing parts of the button
         self.inputButton = QPushButton('Manage Inputs', self)
-        self.typeLabel = QLabel(type_label, self)
         self.outputButton = QPushButton('Manage Output', self)
 
         # Add labels to the button layout
@@ -126,8 +124,8 @@ class GatterButton(QWidget):
             print(f'{self.inputButton.text()} | {self.outputButton.text()} pressed')
 
 class AndButton(GatterButton):
-    def __init__(self, name, _out=None, _inList={}):
-        super().__init__(name, '&')
+    def __init__(self, parent, name, _out=None, _inList={}):
+        super().__init__(parent, name, '&')
         self.out = _out
         self.inputWireList = _inList
         self.update()
@@ -167,32 +165,33 @@ class Application(QWidget):
     def initUI(self):
         self.setAcceptDrops(True)
 
-        self.button1 = GatterButton('Part 1', 'Part 2')
+        self.button1 = GatterButton(self,'Part 1', 'Part 2', None, None)
         self.button1.setObjectName('button1')
         self.button1.move(100, 65)
-        self.button1.show()  # Make sure the widget is shown
 
         self.button1.inputClickEvent.connect(lambda: print("Label 1 Clicked"))
         self.button1.outputClickEvent.connect(lambda: print("Label 2 Clicked"))
 
-    #    self.button2 = AndButton('Button 2 Label')
-    #    self.button2.setObjectName('button2')
-    #    self.button2.move(100, 150)
+        self.button2 = AndButton(self, 'Button 2 Label')
+        self.button2.setObjectName('button2')
+        self.button2.move(100, 150)
 
-        #self.button2.inputClickEvent.connect(lambda: print("Label 1 Clicked"))
- #       self.button2.outputClickEvent.connect(lambda: print("Label 2 Clicked"))
+        self.button2.inputClickEvent.connect(lambda: print("Label 1 Clicked"))
+        self.button2.outputClickEvent.connect(lambda: print("Label 2 Clicked"))
 #
-       # self.point1 = QPoint(50, 50)
-       # self.point2 = QPoint(200, 200)
+        self.point1 = QPoint(50, 50)
+        self.point2 = QPoint(200, 200)
 
         # Create the widget
-#        self.widget = Wire(self.point1, self.point2)
+        self.wire = Wire(self, self.point1, self.point2)
 
         self.setGeometry(300, 300, 400, 300)
 
+
+
     def startDrag(self, widget, event):
         # Create a shadow widget to show where the button will land
-        self.shadow = GatterButton(widget.inputButton.text(), widget.outputButton.text(), widget.main_label.text(), self)
+        self.shadow = GatterButton(self, widget.inputButton.text(), widget.outputButton.text(), widget.main_label.text(), None)
         self.shadow.setStyleSheet("background-color: rgba(128, 100, 100, 0.5);")  # Semi-transparent shadow
         self.shadow.inputButton.setStyleSheet("background-color: rgba(128, 100, 100, 0.5); padding: 10px;")  # Semi-transparent shadow
         self.shadow.outputButton.setStyleSheet("background-color: rgba(128, 100, 100, 0.5); padding: 10px;")  # Semi-transparent shadow
