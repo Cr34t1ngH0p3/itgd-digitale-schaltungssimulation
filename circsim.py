@@ -7,6 +7,7 @@ class Wire:
   def __init__(self):
     self.state = 0
     self.gates = []
+
     Wire.counter += 1
     self.id = Wire.counter
 
