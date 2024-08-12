@@ -1,11 +1,8 @@
-from PyQt5.QtWidgets import QApplication, QPushButton, QWidget, QLabel,  QVBoxLayout, QHBoxLayout
-from PyQt5.QtGui import QPixmap, QColor, QDrag, QPainter, QPen
-from PyQt5.QtCore import Qt, QMimeData, pyqtSlot, QPoint, pyqtSignal
+from PyQt5.QtWidgets import QApplication, QPushButton, QWidget, QVBoxLayout, QHBoxLayout
+from PyQt5.QtGui import QDrag
+from PyQt5.QtCore import Qt, QMimeData, pyqtSignal
 
-
-
-
-class GatterButton(QWidget):
+class SplitButton(QWidget):
     inputClickEvent = pyqtSignal()
     outputClickEvent = pyqtSignal()
 
@@ -16,7 +13,7 @@ class GatterButton(QWidget):
         main_layout = QVBoxLayout(self)
 
         # Create the label above the SplitButton
-        self.main_label = QLabel(label_text, self)
+        self.main_label = QPushButton(label_text, self)
         self.main_label.setStyleSheet("background-color: lightgray;")
         self.main_label.setEnabled(False)  # Make the label non-clickable
 
@@ -70,8 +67,6 @@ class GatterButton(QWidget):
         self.parent().startDrag(self, event)
         drag.exec_(Qt.MoveAction)
 
-
-
 class Application(QWidget):
 
     def __init__(self):
@@ -83,12 +78,13 @@ class Application(QWidget):
     def initUI(self):
         self.setAcceptDrops(True)
 
-        self.button1 = GatterButton('Part 1', 'Part 2', 'label')
+        self.button1 = SplitButton('Part 1', 'Part 2', 'Button 1 Label')
         self.button1.setObjectName('button1')
         self.button1.move(100, 65)
 
-        self.button1.inputClickEvent.connect(lambda: print("Label 1 Clicked"))
-        self.button1.outputClickEvent.connect(lambda: print("Label 2 Clicked"))
+        # Connect button click signals to slots
+        self.button1.inputClickEvent.connect(lambda: print("Button 1 Part 1 Clicked"))
+        self.button1.outputClickEvent.connect(lambda: print("Button 1 Part 2 Clicked"))
 
     #    self.button2 = AndButton('Button 2 Label')
     #    self.button2.setObjectName('button2')
@@ -107,10 +103,10 @@ class Application(QWidget):
 
     def startDrag(self, widget, event):
         # Create a shadow widget to show where the button will land
-        self.shadow = GatterButton(widget.inputButton.text(), widget.outputButton.text(), widget.main_label.text(), self)
+        self.shadow = SplitButton(widget.inputButton.text(), widget.outputButton.text(), widget.main_label.text(), self)
         self.shadow.setStyleSheet("background-color: rgba(128, 100, 100, 0.5);")  # Semi-transparent shadow
-        self.shadow.inputButton.setStyleSheet("background-color: rgba(128, 100, 100, 0.5); padding: 10px;")  # Semi-transparent shadow
-        self.shadow.outputButton.setStyleSheet("background-color: rgba(128, 100, 100, 0.5); padding: 10px;")  # Semi-transparent shadow
+        self.shadow.inputButton.setStyleSheet("background-color: rgba(128, 100, 100, 0.5);")  # Semi-transparent shadow
+        self.shadow.outputButton.setStyleSheet("background-color: rgba(128, 100, 100, 0.5);")  # Semi-transparent shadow
         self.shadow.resize(widget.size())
         self.shadow.show()
 
@@ -122,7 +118,6 @@ class Application(QWidget):
         if self.shadow:
             position = event.pos() - self.shadow.rect().center()
             self.shadow.move(position)
-
         event.accept()
 
     def dropEvent(self, event):
@@ -143,13 +138,11 @@ class Application(QWidget):
 
         event.accept()
 
-
 def main():
     app = QApplication(sys.argv)
     ex = Application()
     ex.show()
     app.exec_()
-
 
 if __name__ == '__main__':
     import sys
