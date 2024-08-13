@@ -5,7 +5,7 @@
 #                                         #
 ###########################################
 
-from PyQt5.QtWidgets import QFrame, QPushButton, QVBoxLayout
+from PyQt5.QtWidgets import QFrame, QPushButton, QHBoxLayout
 
 
 class Menu(QFrame):
@@ -14,10 +14,12 @@ class Menu(QFrame):
         self.setFrameStyle(QFrame.Sunken | QFrame.StyledPanel)
         self.setAcceptDrops(True)
         self.setStyleSheet("background-color: lightgray;")
-        self.setFixedSize(300, 50)
+        self.setFixedSize(400, 50)
         self.source_label = None  # Track the first selected label (source)
         self.source_side = None  # Track whether the source is input or output
-        main_layout = QVBoxLayout()
+
+        # Use QHBoxLayout to arrange buttons horizontally
+        main_layout = QHBoxLayout()
 
         storeConfigButton = QPushButton("Store config", self)
         main_layout.addWidget(storeConfigButton)
@@ -31,7 +33,7 @@ class Menu(QFrame):
                 text-align: center;
                 text-decoration: none;
                 display: inline-block;
-                margin: 10px 10px;
+                margin: 3px;
                 cursor: pointer;
                 border-radius: 5px;
                 height: 20px;
@@ -45,7 +47,7 @@ class Menu(QFrame):
             }
         """)
 
-        loadConfigButton= QPushButton("Load config", self)
+        loadConfigButton = QPushButton("Load config", self)
         main_layout.addWidget(loadConfigButton)
         # Set custom style using setStyleSheet
         loadConfigButton.setStyleSheet("""
@@ -57,7 +59,7 @@ class Menu(QFrame):
                 text-align: center;
                 text-decoration: none;
                 display: inline-block;
-                margin: 10px 10px;
+                margin: 3px;
                 cursor: pointer;
                 border-radius: 5px;
                 height: 20px;
@@ -70,3 +72,6 @@ class Menu(QFrame):
                 background-color: #3e8e41; /* Even darker green */
             }
         """)
+
+        # Set layout for the widget
+        self.setLayout(main_layout)
