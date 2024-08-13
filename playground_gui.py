@@ -282,13 +282,18 @@ class DropArea(QFrame):
         print(source.pos())
         print('dest')
         print(destination.pos())
-        destination.addInputWire(newWire.id)
         source.setOuputWire(newWire.id)
-
+        destination.addInputWire(newWire.id)
+        if source.inputWireList is destination.inputWireList:
+            print("source and destination have the same inputWireList reference!")
+        else:
+            print("source and destination have different inputWireList references.")
         print('+++')
         print(source.inputWireList)
         print('+++')
-        #line = QLineF(source_in_drop, destination_in_drop)
+        print(destination.outWire)
+
+    #line = QLineF(source_in_drop, destination_in_drop)
         self.lines.append(newWire.line)
         self.update()  # Trigger a repaint to draw the new line
 
