@@ -2,6 +2,7 @@ import sys
 from PyQt5.QtWidgets import QApplication, QLabel, QMainWindow, QVBoxLayout, QWidget, QFrame
 from PyQt5.QtCore import Qt, QMimeData, QPoint, QLineF, QRect, pyqtSignal
 from PyQt5.QtGui import QDrag, QPixmap, QPainter, QPen, QColor
+from math import sqrt
 
 wireList = {}
 gateList = {}
@@ -11,7 +12,7 @@ endPointWire = None
 class Wire(QWidget):
     counter = 0
     lines = []
-    def __init__(self, parent, point1, point2, state=0, out_gate_list={}):
+    def __init__(self, parent, point1, point2, state=0, endpoint_gate_list={}, startpoint_gate_list={}):
         super().__init__(parent)
         print('created wire')
         print(point1)
@@ -19,13 +20,15 @@ class Wire(QWidget):
         Wire.counter += 1
         self.id = Wire.counter
         self.state = state
-        self.outputGateList = out_gate_list
+        self.endpointGateList = endpoint_gate_list
+        self.startpointGateList = startpoint_gate_list
         wireList[self.id] = self
 
         self.point1 = point1
         self.point2 = point2
 
         self.line = QLineF(point1, point2)
+
         self.update()
 
 
@@ -36,13 +39,19 @@ class Wire(QWidget):
         self.state = state
 
     def addOutputGate(self, gateId):
-        self.outputGateList[gateId] = gateList[gateId]
+        self.endpointGateList[gateId] = gateList[gateId]
 
     def removeOutputGate(self, gateId):
-        self.outputGateList.pop(gateId)
+        self.endpointGateList.pop(gateId)
+
+    def addInputGate(self, gateId):
+        self.startpointGateList[gateId] = gateList[gateId]
+
+    def removeInputGate(self, gateId):
+        self.startpointGateList.pop(gateId)
 
     def updateGates(self):
-        for gateId in self.outputGateList:
+        for gateId in self.endpointGateList:
             gateList[gateId].update()
 
     def updateStartPoint(self, newPoint):
@@ -52,6 +61,23 @@ class Wire(QWidget):
     def updateEndPoint(self, newPoint):
         self.line.setP2(newPoint)
         self.update()
+
+    def deleteWire(self):
+        for gateId, gateItem in list(self.endpointGateList.items()):
+            gateItem.deleteInputWire(self.id)
+        for gateId, gateItem in list(self.startpointGateList.items()):
+            gateItem.deleteOutputWire(self.id)
+        wireList.pop(self.id)
+        print('del wire')
+        del self
+
+    def mousePressEvent(self, event):
+        print('clicked wire')
+        if event.button() == Qt.LeftButton:
+            print('press left on wire')
+        elif event.button() == Qt.RightButton:
+            print('press right on wire')
+
 
     def paintEvent(self, event):
         print('Paitn event')
@@ -71,11 +97,13 @@ class GatterButton(QLabel):
     inputClickEvent = pyqtSignal()
     outputClickEvent = pyqtSignal()
 
-    def __init__(self, parent, text, input_wires={}, output_wire=None):
+    def __init__(self, parent, text, input_wires={}, output_wire={}):
         super().__init__(text, parent)
 
         GatterButton.counter += 1
         self.id = GatterButton.counter
+        print('New gatter id:', self.id)
+
         self.name = text
         self.inputWireList = input_wires
         self.outWire = output_wire # dictonary with {wireId: wireElement, ....}
@@ -88,21 +116,38 @@ class GatterButton(QLabel):
 
 
     def addInputWire(self, wireId):
-        print('addInutwir')
+        print('addInputWire')
         print(self.pos())
-        print('----')
+        print(self.id)
         self.inputWireList[wireId] = wireList[wireId]
         wireList[wireId].addOutputGate(self.id)
 
     def deleteInputWire(self, wireId):
+        print('delete InputWire')
+        print(self.id)
+        print(wireId)
+        print(len(self.inputWireList))
         self.inputWireList.pop(wireId)
         wireList[wireId].removeOutputGate(self.id)
 
-    def setOuputWire(self, wireId):
-        self.outWire = wireList[wireId]
+    def addOutputWire(self, wireId):
+        print('gatter id')
+        print(self.id)
+        print('addOutputWire')
+        print(wireId)
+        print(wireList[wireId])
+        self.outWire[wireId] = wireList[wireId]
+        wireList[wireId].addInputGate(self.id)
 
-    def deleteOutputWire(self):
-        self.outWire = None
+
+    def deleteOutputWire(self, wireId):
+        print('deleteOutpuWire')
+        print(self.id)
+        print(wireId)
+        print(len(self.outWire))
+        self.outWire.pop(wireId)
+        wireList[wireId].removeInputGate(self.id)
+
 
     def inputClickEventHandler(self):
         print('presed input')
@@ -115,17 +160,18 @@ class GatterButton(QLabel):
     def updateWirePosition(self):
         print(self.pos())
         print(self.x())
-        newButtonOutPoint = QPoint(self.x() + self.width(), self.y() - self.height() // 2 )
-        newButtonStartPoint = QPoint(self.x(), self.y() - self.height() // 2 )
+        newButtonOutPoint = QPoint(self.x() + self.width(), self.y() + self.height() // 2 )
+        newButtonStartPoint = QPoint(self.x(), self.y() + self.height() // 2 )
         print('update wires')
-        if (self.outWire):
-            print('update startpoint')
-            print(self.outWire.id)
-            self.outWire.updateStartPoint(newButtonOutPoint)
+        print(len(self.inputWireList))
+        for wireId, outputWire in self.outWire.items():
+            print('updated endpoint')
+            print(wireId)
+            outputWire.updateStartPoint(newButtonOutPoint)
         for wireId, inputWire in self.inputWireList.items():
             print('updated endpoint')
             print(wireId)
-            #inputWire.updateEndPoint(newButtonStartPoint)
+            inputWire.updateEndPoint(newButtonStartPoint)
 
     def mousePressEvent(self, event):
         if event.button() == Qt.LeftButton:
@@ -217,7 +263,7 @@ class DropArea(QFrame):
         self.setFixedSize(400, 400)
         self.source_label = None  # Track the first selected label (source)
         self.source_side = None  # Track whether the source is input or output
-        self.lines = []  # Store the lines (connections)
+        self.wires = []  # Store the lines (connections)
 
     def dragEnterEvent(self, event):
         if event.mimeData().hasText():
@@ -228,7 +274,8 @@ class DropArea(QFrame):
             source = event.source()
             if isinstance(source, GatterButton) and not source.is_in_drop_area:
                 # Create a new label in the drop area only if it's dragged from outside
-                label = GatterButton(self, event.mimeData().text())
+                print(event.mimeData())
+                label = GatterButton(self, event.mimeData().text(), {}, {})
                 label.move(event.pos())
                 label.is_in_drop_area = True
                 label.show()
@@ -277,12 +324,12 @@ class DropArea(QFrame):
         # Map global positions to DropArea coordinates
         source_in_drop = self.mapFromGlobal(source_pos)
         destination_in_drop = self.mapFromGlobal(destination_pos)
-        newWire = Wire(self, source_in_drop, destination_in_drop)
+        newWire = Wire(self, source_in_drop, destination_in_drop, 0,{}, {})
         print('start')
         print(source.pos())
         print('dest')
         print(destination.pos())
-        source.setOuputWire(newWire.id)
+        source.addOutputWire(newWire.id)
         destination.addInputWire(newWire.id)
         if source.inputWireList is destination.inputWireList:
             print("source and destination have the same inputWireList reference!")
@@ -294,7 +341,7 @@ class DropArea(QFrame):
         print(destination.outWire)
 
     #line = QLineF(source_in_drop, destination_in_drop)
-        self.lines.append(newWire.line)
+        self.wires.append(newWire)
         self.update()  # Trigger a repaint to draw the new line
 
     def paintEvent(self, event):
@@ -304,8 +351,20 @@ class DropArea(QFrame):
         painter.setPen(pen)
 
         # Draw all stored lines
-        for line in self.lines:
-            painter.drawLine(line)
+        for wire in self.wires:
+            painter.drawLine(wire.line)
+
+    def mousePressEvent(self, event):
+        print('mouse rpessed')
+        if event.button() == Qt.RightButton:
+            for wire in self.wires[:]:
+                if is_point_on_line(wire.line, event.pos()):
+                    print("Point is on the line!")
+                    wire.deleteWire()
+                    self.wires.remove(wire)
+                    self.update()
+                else:
+                    print("Point is not on the line.")
 
 # Main window
 class MainWindow(QMainWindow):
@@ -325,6 +384,58 @@ class MainWindow(QMainWindow):
         container = QWidget()
         container.setLayout(main_layout)
         self.setCentralWidget(container)
+
+def distance_to_line_segment(line, point):
+    """
+    Calculate the shortest distance from a point to a line segment.
+
+    :param line: QLineF object representing the line segment.
+    :param point: QPointF object representing the point.
+    :return: The shortest distance from the point to the line segment.
+    """
+    x1, y1 = line.p1().x(), line.p1().y()
+    x2, y2 = line.p2().x(), line.p2().y()
+    px, py = point.x(), point.y()
+
+    # Calculate the line segment vector
+    line_vec_x = x2 - x1
+    line_vec_y = y2 - y1
+
+    # Calculate the vector from the point to the line's start point
+    point_vec_x = px - x1
+    point_vec_y = py - y1
+
+    # Calculate the projection of the point vector onto the line vector
+    line_len_sq = line_vec_x ** 2 + line_vec_y ** 2
+    if line_len_sq == 0:
+        return sqrt(point_vec_x ** 2 + point_vec_y ** 2)  # Start and end points are the same
+
+    t = (point_vec_x * line_vec_x + point_vec_y * line_vec_y) / line_len_sq
+
+    # Clamp the projection to the segment
+    t = max(0, min(1, t))
+
+    # Find the closest point on the line segment
+    closest_x = x1 + t * line_vec_x
+    closest_y = y1 + t * line_vec_y
+
+    # Calculate the distance from the point to the closest point on the line segment
+    dist_x = px - closest_x
+    dist_y = py - closest_y
+
+    return sqrt(dist_x ** 2 + dist_y ** 2)
+
+def is_point_on_line(line, point, tolerance=10.0):
+    """
+    Check if a point is close enough to a line to be considered as 'clicked' on it.
+
+    :param line: QLineF object representing the line.
+    :param point: QPointF object representing the point (click position).
+    :param tolerance: Distance tolerance to determine if the point is on the line.
+    :return: True if point is within tolerance distance from the line, otherwise False.
+    """
+    distance = distance_to_line_segment(line, point)
+    return distance <= tolerance
 
 def main():
     app = QApplication(sys.argv)
