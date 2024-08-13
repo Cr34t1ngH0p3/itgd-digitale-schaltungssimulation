@@ -9,9 +9,9 @@
 #                                                                                   #
 #####################################################################################
 
-from PyQt5.QtWidgets import QApplication, QLabel, QMainWindow, QVBoxLayout, QWidget, QFrame
-from PyQt5.QtCore import Qt, QMimeData, QPoint, QLineF, QRect, pyqtSignal
-from PyQt5.QtGui import QDrag, QPixmap, QPainter, QPen, QColor
+from PyQt5.QtWidgets import QWidget
+from PyQt5.QtCore import Qt, QLineF
+from PyQt5.QtGui import QPainter, QPen
 
 from ..helper.global_variables import wireList, gateList
 

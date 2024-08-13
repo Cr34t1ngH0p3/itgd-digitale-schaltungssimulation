@@ -7,7 +7,7 @@
 ##############################################
 
 
-from PyQt5.QtWidgets import QApplication, QLabel, QMainWindow, QVBoxLayout, QWidget, QFrame
+from PyQt5.QtWidgets import QMainWindow, QVBoxLayout, QWidget
 
 from ..UI.drag_and_drop import DropArea
 from ..elements.gatter.parent_gatter import GatterButton
