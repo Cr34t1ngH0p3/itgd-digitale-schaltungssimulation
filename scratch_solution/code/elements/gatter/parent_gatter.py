@@ -22,40 +22,45 @@ class GatterButton(QLabel):
     inputClickEvent = pyqtSignal()
     outputClickEvent = pyqtSignal()
 
-    def __init__(self, parent, text, input_wires={}, output_wire={}):
+    # TODO, use self.start_position when creating object, right now we need to use self.move after every creation
+    def __init__(self, parent, text, input_wires=[], output_wire=[], position_x=100, position_y=0):
         super().__init__(text, parent)
 
         GatterButton.counter += 1
         self.id = GatterButton.counter
         print('New gatter id:', self.id)
-
         self.name = text
         self.inputWireList = input_wires
         self.outWire = output_wire # dictonary with {wireId: wireElement, ....}
-
         self.setFixedSize(100, 50)
         self.setStyleSheet("background-color: lightblue; border: 1px solid black;")
         self.start_pos = QPoint(0, 0)
+        # self.start_pos = QPoint(position_x, position_y) # set it always to 0,0
         self.is_in_drop_area = False
         gateList[self.id] = self
 
     # tell gatter that the wire is connected
     # tell the wire that its endpoint is connected to this input
     def addInputWire(self, wireId):
-        self.inputWireList[wireId] = wireList[wireId]
-        wireList[wireId].addOutputGate(self.id)
+        self.inputWireList.append(wireId)
+        if wireList[wireId]:
+            wireList[wireId].addOutputGate(self.id)
 
+    # delete the wire from self-inputlist and tell wire it got disconnected
     def deleteInputWire(self, wireId):
-        self.inputWireList.pop(wireId)
-        wireList[wireId].removeOutputGate(self.id)
+        self.inputWireList.remove(wireId)
+        if wireList[wireId]:
+            wireList[wireId].removeOutputGate(self.id)
 
     def addOutputWire(self, wireId):
-        self.outWire[wireId] = wireList[wireId]
-        wireList[wireId].addInputGate(self.id)
+        self.outWire.append(wireId)
+        if wireList[wireId]:
+            wireList[wireId].addInputGate(self.id)
 
     def deleteOutputWire(self, wireId):
-        self.outWire.pop(wireId)
-        wireList[wireId].removeInputGate(self.id)
+        self.outWire.remove(wireId)
+        if wireList[wireId]:
+            wireList[wireId].removeInputGate(self.id)
 
     def inputClickEventHandler(self):
         self.inputClickEvent.emit()
@@ -65,17 +70,29 @@ class GatterButton(QLabel):
 
     # calculate new wire points and update each connected wire
     def updateWirePosition(self):
-        newButtonOutPoint = QPoint(self.x() + self.width(), self.y() + self.height() // 2 )
-        newButtonStartPoint = QPoint(self.x(), self.y() + self.height() // 2 )
-        for wireId, outputWire in self.outWire.items():
-            outputWire.updateStartPoint(newButtonOutPoint)
-        for wireId, inputWire in self.inputWireList.items():
-            inputWire.updateEndPoint(newButtonStartPoint)
+        newButtonOutPoint = QPoint(self.x() + self.width(), self.y() + self.height() // 2 ) # outputwire are in the half of the right border -> change point of "wire.startpoint"
+        newButtonStartPoint = QPoint(self.x(), self.y() + self.height() // 2 ) # inputwire are at the half of the left border -> change point of "wire.endpoint"
+        for wireId in self.outWire:
+            wireList[wireId].updateStartPoint(newButtonOutPoint)
+        for wireId in self.inputWireList:
+            wireList[wireId].updateEndPoint(newButtonStartPoint)
 
+    # write a nice json format to store gatterobject in file
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'name': self.name,
+            'inputWireList': self.inputWireList,
+            'outWire': self.outWire,
+            'position-x': self.start_pos.x(),
+            'position-y': self.start_pos.y(),
+        }
+
+    # if button pressed with right click there is the option to create a new wire to an other gatter
     def mousePressEvent(self, event):
         #from scratch_solution.UI.drag_and_drop import DropArea
         if event.button() == Qt.LeftButton:
-            self.start_pos = event.pos()
+            self.start_pos = event.pos() # store start (acual position before move)
         elif event.button() == Qt.RightButton:
             # Determine if the click was on the input or output side
            # if isinstance(self.parent(), DropArea):
@@ -104,6 +121,7 @@ class GatterButton(QLabel):
             else:
                 drag.exec_(Qt.CopyAction)
 
+    # move button for the distance between new position and old position
     def move(self, pos):
         super().move(pos - self.start_pos)
 

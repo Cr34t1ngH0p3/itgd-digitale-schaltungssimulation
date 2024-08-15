@@ -10,7 +10,7 @@ from PyQt5.QtCore import Qt, QPoint
 from PyQt5.QtGui import QPainter, QPen
 
 from ..elements.gatter.parent_gatter import GatterButton
-from ..helper.global_variables import wireList
+from ..helper.global_variables import wireList, gateList
 from ..helper.functions import is_point_on_line
 from ..elements.wire import Wire
 
@@ -34,7 +34,7 @@ class DropArea(QFrame):
             source = event.source()
             if isinstance(source, GatterButton) and not source.is_in_drop_area:
                 # Create a new gatter in the drop area only if it's dragged from outside
-                gatter = GatterButton(self, event.mimeData().text(), {}, {})
+                gatter = GatterButton(self, event.mimeData().text(), [], [], event.pos().x(), event.pos().y())
                 gatter.move(event.pos())
                 gatter.is_in_drop_area = True
                 gatter.show() # display the new gatter
@@ -73,7 +73,7 @@ class DropArea(QFrame):
         source_in_drop = self.mapFromGlobal(source_pos)
         destination_in_drop = self.mapFromGlobal(destination_pos)
         # create new wire
-        newWire = Wire(self, source_in_drop, destination_in_drop, 0,{}, {})
+        newWire = Wire(self, source_in_drop, destination_in_drop, 0,[], [])
         # add wire to the two gates
         source.addOutputWire(newWire.id)
         destination.addInputWire(newWire.id)
@@ -95,3 +95,11 @@ class DropArea(QFrame):
                 if is_point_on_line(wire.line, event.pos()):
                     wire.deleteWire()
                     self.update()
+
+    # creates a gatterbutton and adds it to the UI
+    def addGatterButton(self, gatter_data):
+        gatter = GatterButton(self, gatter_data['name'], gatter_data['inputWireList'], gatter_data['outWire'], gatter_data['position-x'], gatter_data['position-y'])
+        gatter.is_in_drop_area = True
+        gatter.move(QPoint(gatter_data['position-x'], gatter_data['position-y']))
+        gateList[gatter.id] = gatter
+        gatter.show()

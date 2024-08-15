@@ -22,13 +22,14 @@ class MainWindow(QMainWindow):
 
         main_layout = QVBoxLayout()
 
-        menu = Menu(self)
+        drop_area = DropArea(self)
+        menu = Menu(self, drop_area) # give drop_area as argument to menu so it can create objets ther, (maybe store drop_area in a different variable?)
+
         main_layout.addWidget(menu)
 
         self.draggable_label = GatterButton(self, " ")
         main_layout.addWidget(self.draggable_label)
 
-        drop_area = DropArea(self)
         main_layout.addWidget(drop_area)
 
         container = QWidget()
