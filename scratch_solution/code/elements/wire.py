@@ -48,7 +48,7 @@ class Wire(QWidget):
         self.state = state
 
     def addOutputGate(self, gateId):
-        self.endpointGateList.append([gateId])
+        self.endpointGateList.append(gateId)
 
     def removeOutputGate(self, gateId):
         self.endpointGateList.remove(gateId)
@@ -89,10 +89,10 @@ class Wire(QWidget):
             'state': self.state,
             'endpointGates': self.endpointGateList,
             'startpointGates': self.startpointGateList,
-            'startPoint-x': self.point1.x(),
-            'startPoint-y': self.point1.y(),
-            'endPoint-x': self.point2.x(),
-            'endPoint-y': self.point2.y()
+            'startPoint_x': self.point1.x(),
+            'startPoint_y': self.point1.y(),
+            'endPoint_x': self.point2.x(),
+            'endPoint_y': self.point2.y()
         }
 
     def mousePressEvent(self, event):

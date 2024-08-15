@@ -27,7 +27,7 @@ class MainWindow(QMainWindow):
 
         main_layout.addWidget(menu)
 
-        self.draggable_label = GatterButton(self, " ")
+        self.draggable_label = GatterButton(self, "-")
         main_layout.addWidget(self.draggable_label)
 
         main_layout.addWidget(drop_area)

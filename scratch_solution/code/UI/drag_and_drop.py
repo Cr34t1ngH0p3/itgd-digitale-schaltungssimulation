@@ -34,7 +34,7 @@ class DropArea(QFrame):
             source = event.source()
             if isinstance(source, GatterButton) and not source.is_in_drop_area:
                 # Create a new gatter in the drop area only if it's dragged from outside
-                gatter = GatterButton(self, event.mimeData().text(), [], [], event.pos().x(), event.pos().y())
+                gatter = GatterButton(self, " ", [], [], event.pos().x(), event.pos().y(), True)
                 gatter.move(event.pos())
                 gatter.is_in_drop_area = True
                 gatter.show() # display the new gatter
@@ -98,8 +98,16 @@ class DropArea(QFrame):
 
     # creates a gatterbutton and adds it to the UI
     def addGatterButton(self, gatter_data):
-        gatter = GatterButton(self, gatter_data['name'], gatter_data['inputWireList'], gatter_data['outWire'], gatter_data['position-x'], gatter_data['position-y'])
+        gatter = GatterButton(self, gatter_data['name'], gatter_data['inputWireList'], gatter_data['outWire'], gatter_data['position_x'], gatter_data['position_y'])
         gatter.is_in_drop_area = True
-        gatter.move(QPoint(gatter_data['position-x'], gatter_data['position-y']))
+        gatter.move(QPoint(gatter_data['position_x'], gatter_data['position_y']))
         gateList[gatter.id] = gatter
         gatter.show()
+
+    # creates a gatterbutton and adds it to the UI
+    def addWire(self, wire_data):
+        wire = Wire(self, QPoint(wire_data['startPoint_x'], wire_data['startPoint_y']), QPoint(wire_data['endPoint_x'], wire_data['endPoint_y']), wire_data['state'], wire_data['startpointGates'], wire_data['endpointGates'])
+        wireList[wire.id] = wire
+        gateList[wire_data['startpointGates'][0]].addOutputWire(wire.id) # right now there are just one gatter per endpoint, see #TODO in wireclass
+        gateList[wire_data['endpointGates'][0]].addInputWire(wire.id) # right now there are just one gatter per endpoint, see #TODO in wireclass
+        self.update()

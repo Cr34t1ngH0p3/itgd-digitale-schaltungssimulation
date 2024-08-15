@@ -38,7 +38,7 @@ class Menu(QFrame):
         except Exception as e:
             QMessageBox.critical(self, "Error", f"Failed to store config: {e}")
 
-
+# TODO check if ids are correct, specially if there were gatters before
     def load_config(self):
         # Your logic for loading the config
         options = QFileDialog.Options()
@@ -50,13 +50,17 @@ class Menu(QFrame):
                 config_data = json.load(config_file)
 
             # Clear the existing gateList
+            # TODO clear existing object [for wire in wireList: wire.remove()....]
             gateList.clear()
             wireList.clear()
-            print(config_data)
+
             for entry in config_data['gatter']:
                 gatter_data = entry['gatter']
-                print(gatter_data)
                 self.dropArea.addGatterButton(gatter_data)
+
+            for entry in config_data['wire']:
+                wire_data = entry['wire']
+                self.dropArea.addWire(wire_data)
 
             QMessageBox.information(self, "Load Config", f"Config loaded successfully from {file_path}!")
 

@@ -23,7 +23,7 @@ class GatterButton(QLabel):
     outputClickEvent = pyqtSignal()
 
     # TODO, use self.start_position when creating object, right now we need to use self.move after every creation
-    def __init__(self, parent, text, input_wires=[], output_wire=[], position_x=100, position_y=0):
+    def __init__(self, parent, text, input_wires=[], output_wire=[], position_x=100, position_y=0, is_in_drop_area=False):
         super().__init__(text, parent)
 
         GatterButton.counter += 1
@@ -36,8 +36,9 @@ class GatterButton(QLabel):
         self.setStyleSheet("background-color: lightblue; border: 1px solid black;")
         self.start_pos = QPoint(0, 0)
         # self.start_pos = QPoint(position_x, position_y) # set it always to 0,0
-        self.is_in_drop_area = False
-        gateList[self.id] = self
+        self.is_in_drop_area = is_in_drop_area
+        if self.is_in_drop_area:
+            gateList[self.id] = self
 
     # tell gatter that the wire is connected
     # tell the wire that its endpoint is connected to this input
@@ -84,8 +85,8 @@ class GatterButton(QLabel):
             'name': self.name,
             'inputWireList': self.inputWireList,
             'outWire': self.outWire,
-            'position-x': self.start_pos.x(),
-            'position-y': self.start_pos.y(),
+            'position_x': self.start_pos.x(),
+            'position_y': self.start_pos.y(),
         }
 
     # if button pressed with right click there is the option to create a new wire to an other gatter
@@ -124,6 +125,7 @@ class GatterButton(QLabel):
     # move button for the distance between new position and old position
     def move(self, pos):
         super().move(pos - self.start_pos)
+        self.start_pos = pos
 
     def paintEvent(self, event):
         super().paintEvent(event)
