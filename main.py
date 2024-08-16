@@ -3,11 +3,22 @@
 
 
 import sys
-from PyQt5.QtWidgets import QApplication, QMainWindow
+
+import pyqtgraph.flowchart.Terminal
+from PyQt5.QtCore import Qt
+from PyQt5.QtGui import QPen
+from PyQt5.QtGui import QMouseEvent
+from PyQt5.QtWidgets import QApplication, QMainWindow, QGraphicsLineItem
 from PyQt5.uic import loadUi
 import pyqtgraph as pg
+from pyqtgraph.flowchart.Terminal import ConnectionItem
+from pyqtgraph.flowchart.Terminal import TerminalGraphicsItem
+from pyqtgraph.flowchart import Terminal
 from pyqtgraph.flowchart import Flowchart, Node
 import pyqtgraph.flowchart.library as fclib
+
+from pyqtgraph import GraphicsObject
+
 
 # import AND gate logic from module
 from module import AND
@@ -16,6 +27,8 @@ from module import NAND
 # import OR gate logic from module
 from module import OR
 
+
+connection = []
 
 class Main(QMainWindow):
 
@@ -27,12 +40,8 @@ class Main(QMainWindow):
         # To begin, you must decide what the input and output variables will be for your flowchart.
         # Create a flowchart with one terminal defined for each variable:
         self.fc = Flowchart(terminals={
-            'INPUT_TRUE_0': {'io': 'in'},
-            'INPUT_TRUE_1': {'io': 'in'},
-            'INPUT_TRUE_2': {'io': 'in'},
-            'INPUT_FALSE_0': {'io': 'in'},
-            'INPUT_FALSE_1': {'io': 'in'},
-            'INPUT_FALSE_2': {'io': 'in'},
+            'INPUT_TRUE': {'io': 'in'},
+            'INPUT_FALSE': {'io': 'in'},
             'OUTPUT1': {'io': 'out'},
             'OUTPUT2': {'io': 'out'}
         })
@@ -69,14 +78,11 @@ class Main(QMainWindow):
         self.canvas.addWidget(diagram_controller)
 
         # setting some static inputs in flowchart for later use to set Logic Ports
-        self.fc.setInput(INPUT_TRUE_0=True)
-        self.fc.setInput(INPUT_TRUE_1=True)
-        self.fc.setInput(INPUT_TRUE_2=True)
-        self.fc.setInput(INPUT_FALSE_0=False)
-        self.fc.setInput(INPUT_FALSE_1=False)
-        self.fc.setInput(INPUT_FALSE_2=False)
+        self.fc.setInput(INPUT_TRUE=True)
+        self.fc.setInput(INPUT_FALSE=False)
 
-    
+
+
 ##############################################################################################################################
 # A node subclass implements:
 # 1. list of input/output terminals and their properties
@@ -84,7 +90,10 @@ class Main(QMainWindow):
 #    returns a dict with the names of output terminals as keys
 ##############################################################################################################################
 
-    
+class CustomTerminal(Terminal):
+    def __init__(self, node, name, **opts):
+        super().__init__(node, name, **opts)
+
 class ANDPort(pg.flowchart.Node):
 
     # this is a custom class for our logic gates, 
@@ -94,8 +103,8 @@ class ANDPort(pg.flowchart.Node):
     nodeName = 'AND'
 
     # all nodes are provided a unique name when they are created
-    def __init__(self, name):
-
+    def __init__(self, name, **kwags):
+        super().__init__(name, **kwags)
         # instantiation of the AND gate from our library
         self.port_object = AND(name)
         # returns a dictionary with a definition of inputs/outputs
@@ -118,6 +127,24 @@ class ANDPort(pg.flowchart.Node):
 
         # initialize with a dict describing the I/O terminals on this node
         Node.__init__(self, name, terminals = self.terminals)
+
+    def addTerminal(self, name, **opts):
+        """Add a new terminal to this Node with the given name. Extra
+        keyword arguments are passed to Terminal.__init__.
+
+        Causes sigTerminalAdded to be emitted."""
+        name = self.nextTerminalName(name)
+        term = CustomTerminal(self, name, **opts)
+        self.terminals[name] = term
+        if term.isInput():
+            self._inputs[name] = term
+        elif term.isOutput():
+            self._outputs[name] = term
+        self.graphicsItem().updateTerminals()
+        self.sigTerminalAdded.emit(self, term)
+        return term
+
+
 
 
     ###############################################################################
@@ -152,6 +179,10 @@ class ANDPort(pg.flowchart.Node):
     #     if self._graphicsItem is None:
     #         self._graphicsItem = NodeGraphicsItem(self)
     #     return self._graphicsItem
+
+    def connected(self, localTerm, remoteTerm):
+        print('connected')
+
 
 
 ###################################################################################################################################################
@@ -280,6 +311,7 @@ class ORPort(pg.flowchart.Node):
     #     if self._graphicsItem is None:
     #         self._graphicsItem = NodeGraphicsItem(self)
     #     return self._graphicsItem
+
 
 
 

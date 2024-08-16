@@ -92,6 +92,7 @@ class GatterButton(QLabel):
     # if button pressed with right click there is the option to create a new wire to an other gatter
     def mousePressEvent(self, event):
         #from scratch_solution.UI.drag_and_drop import DropArea
+
         if event.button() == Qt.LeftButton:
             self.start_pos = event.pos() # store start (acual position before move)
         elif event.button() == Qt.RightButton:
@@ -103,6 +104,9 @@ class GatterButton(QLabel):
             else:
                 # Clicked on the output side
                 self.parent().label_clicked(self, "output")
+        elif event.button() == Qt.MiddleButton:
+            self.deleteGatter()
+            self.update()
 
     def mouseMoveEvent(self, event):
         if event.buttons() == Qt.LeftButton:
@@ -140,3 +144,26 @@ class GatterButton(QLabel):
         # Label the sides (optional)
         painter.drawText(QRect(0, 0, mid_x, self.height()), Qt.AlignCenter, "IN")
         painter.drawText(QRect(mid_x, 0, self.width() - mid_x, self.height()), Qt.AlignCenter, "OUT")
+
+    def deleteGatter(self):
+        for InputWireId in self.inputWireList:
+            for wireId in list(wireList.keys()):
+                if (InputWireId == wireId):
+                    wireList[wireId].deleteWire()
+        for OutputWireId in self.outWire:
+            for wireId in list(wireList.keys()):
+                if (OutputWireId == wireId):
+                    wireList[wireId].deleteWire()
+
+        gateList.pop(self.id)
+
+        self.deleteLater()
+        self.setParent(None)
+        
+
+        del self
+
+        print('Gatter is deleted')
+
+
+
