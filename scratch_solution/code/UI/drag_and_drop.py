@@ -9,8 +9,10 @@ from PyQt5.QtWidgets import QFrame
 from PyQt5.QtCore import Qt, QPoint
 from PyQt5.QtGui import QPainter, QPen
 
+from ..elements.gatter.and_gatter import AndButton
+from ..elements.gatter.or_gatter import OrButton
 from ..elements.gatter.parent_gatter import GatterButton
-from ..helper.global_variables import wireList, gateList
+from ..helper.global_variables import wireList, gateList, button_color, background_color
 from ..helper.functions import is_point_on_line
 from ..elements.wire import Wire
 
@@ -20,7 +22,7 @@ class DropArea(QFrame):
         super().__init__(parent)
         self.setFrameStyle(QFrame.Sunken | QFrame.StyledPanel)
         self.setAcceptDrops(True)
-        self.setStyleSheet("background-color: lightgray;")
+        self.setStyleSheet(f"background-color: {background_color};")
         self.setFixedSize(400, 400)
         self.source_label = None  # Track the first selected label (source)
         self.source_side = None  # Track whether the source is input or output
@@ -34,7 +36,10 @@ class DropArea(QFrame):
             source = event.source()
             if isinstance(source, GatterButton) and not source.is_in_drop_area:
                 # Create a new gatter in the drop area only if it's dragged from outside
-                gatter = GatterButton(self, " ", [], [], event.pos().x(), event.pos().y(), True)
+                if isinstance(source, AndButton):
+                    gatter = AndButton(parent=self, name="&", inList=[], outList=[], position_x=event.pos().x(), position_y=event.pos().y(), is_in_drop_area=True)
+                else:
+                    gatter = OrButton(parent=self, name="|", inList=[], outList=[], position_x=event.pos().x(), position_y=event.pos().y(), is_in_drop_area=True)
                 gatter.move(event.pos())
                 gatter.is_in_drop_area = True
                 gatter.show() # display the new gatter
@@ -58,7 +63,7 @@ class DropArea(QFrame):
             if side == "input" and label != self.source_label:
                 # Connect only if the second label's side is input and it's a different label
                 self.draw_line(self.source_label, label)
-                self.source_label.setStyleSheet("background-color: lightblue; border: 1px solid black;")
+                self.source_label.setStyleSheet(f"background-color: {button_color}; border: 1px solid black;")
                 self.source_label = None  # Reset the selection
                 self.source_side = None
 
@@ -82,7 +87,7 @@ class DropArea(QFrame):
     def paintEvent(self, event):
         super().paintEvent(event)
         painter = QPainter(self)
-        pen = QPen(Qt.black, 2)
+        pen = QPen(Qt.white, 3)
         painter.setPen(pen)
 
         # Draw all stored lines

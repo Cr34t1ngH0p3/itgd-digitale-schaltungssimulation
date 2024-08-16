@@ -1,10 +1,8 @@
 from .parent_gatter import GatterButton
 
 class AndButton(GatterButton):
-    def __init__(self, name, _out=None, _inList={}):
-        super().__init__(name)
-        self.out = _out
-        self.inputWireList = _inList
+    def __init__(self, name, inList=[], outList=[],  position_x=0, position_y=0, is_in_drop_area=False, parent=None,):
+        super().__init__(parent, name, inList, outList, position_x, position_y, is_in_drop_area)
         self.update()
         #self.inputButton.text('AND')
 

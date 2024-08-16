@@ -11,7 +11,8 @@ from PyQt5.QtWidgets import QMainWindow, QVBoxLayout, QWidget, QPushButton
 
 from ..UI.drag_and_drop import DropArea
 from ..UI.menu import Menu
-from ..elements.gatter.parent_gatter import GatterButton
+from ..elements.gatter.or_gatter import OrButton
+from ..elements.gatter.and_gatter import AndButton
 
 # Main window
 class MainWindow(QMainWindow):
@@ -27,8 +28,10 @@ class MainWindow(QMainWindow):
 
         main_layout.addWidget(menu)
 
-        self.draggable_label = GatterButton(self, "-")
-        main_layout.addWidget(self.draggable_label)
+        self.and_button = AndButton(parent=self, name="&") # "parent" button from which copys can be drag and dropped into the area to create a new one
+        self.or_button = OrButton(parent=self, name="|") # "parent" button from which copys can be drag and dropped into the area to create a new one
+        main_layout.addWidget(self.and_button)
+        main_layout.addWidget(self.or_button)
 
         main_layout.addWidget(drop_area)
 

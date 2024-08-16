@@ -14,7 +14,7 @@ from PyQt5.QtWidgets import QLabel
 from PyQt5.QtCore import Qt, QMimeData, QPoint, QRect, pyqtSignal
 from PyQt5.QtGui import QDrag, QPixmap, QPainter, QPen
 
-from ...helper.global_variables import wireList, gateList
+from ...helper.global_variables import wireList, gateList, button_color
 
 # Draggable widget with input and output sides
 class GatterButton(QLabel):
@@ -33,7 +33,7 @@ class GatterButton(QLabel):
         self.inputWireList = input_wires
         self.outWire = output_wire # dictonary with {wireId: wireElement, ....}
         self.setFixedSize(100, 50)
-        self.setStyleSheet("background-color: lightblue; border: 1px solid black;")
+        self.setStyleSheet(f"background-color: {button_color}; border: 1px solid black;")
         self.start_pos = QPoint(0, 0)
         # self.start_pos = QPoint(position_x, position_y) # set it always to 0,0
         self.is_in_drop_area = is_in_drop_area

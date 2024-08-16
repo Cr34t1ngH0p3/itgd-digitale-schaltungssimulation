@@ -9,7 +9,7 @@ import json
 
 from PyQt5.QtCore import QPoint
 from PyQt5.QtWidgets import QFrame, QPushButton, QHBoxLayout, QMessageBox, QFileDialog
-from ..helper.global_variables import wireList, gateList
+from ..helper.global_variables import wireList, gateList, background_color, button_color
 from ..elements.gatter.parent_gatter import GatterButton
 from .drag_and_drop import DropArea
 
@@ -73,7 +73,7 @@ class Menu(QFrame):
         self.dropArea = drop_area
         self.setFrameStyle(QFrame.Sunken | QFrame.StyledPanel)
         self.setAcceptDrops(True)
-        self.setStyleSheet("background-color: lightgray;")
+        self.setStyleSheet(f"background-color: {background_color};")
         self.setFixedSize(400, 50)
         self.source_label = None  # Track the first selected label (source)
         self.source_side = None  # Track whether the source is input or output
@@ -87,11 +87,11 @@ class Menu(QFrame):
         storeConfigButton.clicked.connect(self.store_config)  # Connect to store_config function
         main_layout.addWidget(storeConfigButton)
         # Set custom style using setStyleSheet
-        storeConfigButton.setStyleSheet("""
-            QPushButton {
-                background-color: #4CAF50; /* Green */
+        storeConfigButton.setStyleSheet(f"""
+            QPushButton {{
+                background-color: {button_color}; /* white */
+                color: black;
                 border: none;
-                color: white;
                 padding: 3px 5px;
                 text-align: center;
                 text-decoration: none;
@@ -101,24 +101,24 @@ class Menu(QFrame):
                 border-radius: 5px;
                 height: 20px;
                 width: 100px;
-            }
-            QPushButton:hover {
+            }}
+            QPushButton:hover {{
                 background-color: #45a049; /* Darker green */
-            }
-            QPushButton:pressed {
+            }}
+            QPushButton:pressed {{
                 background-color: #3e8e41; /* Even darker green */
-            }
+            }}
         """)
 
         loadConfigButton = QPushButton("Load config", self)
         loadConfigButton.clicked.connect(self.load_config)  # Connect to load_config function
         main_layout.addWidget(loadConfigButton)
         # Set custom style using setStyleSheet
-        loadConfigButton.setStyleSheet("""
-            QPushButton {
-                background-color: #4CAF50; /* Green */
+        loadConfigButton.setStyleSheet(f"""
+            QPushButton {{
+                background-color: {button_color}; /* white */
+                color: black;
                 border: none;
-                color: white;
                 padding: 3px 5px;
                 text-align: center;
                 text-decoration: none;
@@ -128,13 +128,13 @@ class Menu(QFrame):
                 border-radius: 5px;
                 height: 20px;
                 width: 100px;
-            }
-            QPushButton:hover {
+            }}
+            QPushButton:hover {{
                 background-color: #45a049; /* Darker green */
-            }
-            QPushButton:pressed {
+            }}
+            QPushButton:pressed {{
                 background-color: #3e8e41; /* Even darker green */
-            }
+            }}
         """)
 
         # Set layout for the widget
