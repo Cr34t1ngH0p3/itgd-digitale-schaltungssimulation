@@ -7,7 +7,7 @@
 
 from PyQt5.QtWidgets import QFrame
 from PyQt5.QtCore import Qt, QPoint
-from PyQt5.QtGui import QPainter, QPen
+from PyQt5.QtGui import QPainter, QPen, QColor
 
 from ..elements.gatter.and_gatter import AndButton
 from ..elements.gatter.or_gatter import OrButton
@@ -87,7 +87,7 @@ class DropArea(QFrame):
     def paintEvent(self, event):
         super().paintEvent(event)
         painter = QPainter(self)
-        pen = QPen(Qt.white, 3)
+        pen = QPen(QColor(button_color), 3)
         painter.setPen(pen)
 
         # Draw all stored lines
