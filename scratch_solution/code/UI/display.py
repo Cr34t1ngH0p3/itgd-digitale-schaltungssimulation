@@ -7,7 +7,7 @@
 ##############################################
 
 
-from PyQt5.QtWidgets import QMainWindow, QVBoxLayout, QWidget, QPushButton
+from PyQt5.QtWidgets import QMainWindow, QVBoxLayout, QWidget, QPushButton, QHBoxLayout
 
 from ..UI.drag_and_drop import DropArea
 from ..UI.menu import Menu
@@ -28,13 +28,33 @@ class MainWindow(QMainWindow):
 
         main_layout.addWidget(menu)
 
-        self.and_button = AndButton(parent=self, name="&") # "parent" button from which copys can be drag and dropped into the area to create a new one
-        self.or_button = OrButton(parent=self, name="|") # "parent" button from which copys can be drag and dropped into the area to create a new one
-        main_layout.addWidget(self.and_button)
-        main_layout.addWidget(self.or_button)
+        # create ON and OFF startpoint
+        self.createStartPoints(drop_area)
+
+        self.createGatterButton(main_layout)
 
         main_layout.addWidget(drop_area)
 
         container = QWidget()
         container.setLayout(main_layout)
         self.setCentralWidget(container)
+
+    # there should only exist one with ON and one with OFF
+    def createStartPoints(self, drop_area):
+        drop_area.addStartButton(0, 0, 200)
+        drop_area.addStartButton(1, 0, 150)
+
+    def createGatterButton(self, main_layout):
+        # Create a horizontal layout
+        button_layout = QHBoxLayout()
+
+        # Create the buttons
+        self.and_button = AndButton(parent=self, name="&")
+        self.or_button = OrButton(parent=self, name="|")
+
+        # Add the buttons to the horizontal layout
+        button_layout.addWidget(self.and_button)
+        button_layout.addWidget(self.or_button)
+
+        # Add the horizontal layout to the main layout
+        main_layout.addLayout(button_layout)

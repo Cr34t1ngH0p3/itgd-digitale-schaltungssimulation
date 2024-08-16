@@ -13,15 +13,16 @@ from PyQt5.QtWidgets import QWidget
 from PyQt5.QtCore import Qt, QLineF
 from PyQt5.QtGui import QPainter, QPen
 
-from ..helper.global_variables import wireList, gateList
+from ..helper.global_variables import wireList, gateList, startPoints
+
 
 class Wire(QWidget):
     counter = 0
     lines = []
-    # TODO discuss: wires werden immer neu erzeugt und haben damit nur ein gatter, brauchen wir listen oder soll bei
+    #  TODO discuss: wires werden immer neu erzeugt und haben damit nur ein gatter, brauchen wir listen oder soll bei
     #  erzeugen eines wires bei einem gatter, welches bereit ein output wire hat dieses verwendet werden und statt ein
     #  neues zu erzeugen einfach bei dem bestehenden wire das zweite endgatter hinzufügen?
-    def __init__(self, parent, point1, point2, state=0, endpoint_gate_list=[], startpoint_gate_list=[]):
+    def __init__(self, parent, point1, point2, state=0, endpoint_gate_list=[], startpoint_gate_list=[], connected_to_start_point=False, starelement_point=0):
         super().__init__(parent)
         print('created wire')
         print(point1)
@@ -35,6 +36,8 @@ class Wire(QWidget):
 
         self.point1 = point1
         self.point2 = point2
+        self.connectedToStartPoint = connected_to_start_point
+        self.startPoint = starelement_point
 
         self.line = QLineF(point1, point2)
 
@@ -59,6 +62,11 @@ class Wire(QWidget):
     def removeInputGate(self, gateId):
         self.startpointGateList.remove(gateId)
 
+    # used if wire connects directly to the startpoints
+    def addToStartPointElement(self, startPointId):
+        self.connectedToStartPoint = True
+        self.startPoint = startPointId
+
     def updateGates(self):
         for gateId in self.endpointGateList:
             gateList[gateId].update()
@@ -76,8 +84,11 @@ class Wire(QWidget):
     def deleteWire(self):
         for gateId in self.endpointGateList:
             gateList[gateId].deleteInputWire(self.id)
-        for gateId in self.startpointGateList:
-            gateList[gateId].deleteOutputWire(self.id)
+        if self.connectedToStartPoint:
+            startPoints[self.startPoint].deleteOutpuWire(self.id)
+        else:
+            for gateId in self.startpointGateList:
+                gateList[gateId].deleteOutputWire(self.id)
         wireList.pop(self.id)
         print('del wire')
         del self
@@ -92,7 +103,9 @@ class Wire(QWidget):
             'startPoint_x': self.point1.x(),
             'startPoint_y': self.point1.y(),
             'endPoint_x': self.point2.x(),
-            'endPoint_y': self.point2.y()
+            'endPoint_y': self.point2.y(),
+            'connectedToStartPoint': self.connectedToStartPoint,
+            'startPoint': self.startPoint
         }
 
     def mousePressEvent(self, event):

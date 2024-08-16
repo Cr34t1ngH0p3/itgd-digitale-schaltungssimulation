@@ -9,7 +9,9 @@ import json
 
 from PyQt5.QtCore import QPoint
 from PyQt5.QtWidgets import QFrame, QPushButton, QHBoxLayout, QMessageBox, QFileDialog
-from ..helper.global_variables import wireList, gateList, background_color, button_color
+
+from ..elements.startElement import startElement
+from ..helper.global_variables import wireList, gateList, background_color, button_color, startPoints
 from ..elements.gatter.parent_gatter import GatterButton
 from .drag_and_drop import DropArea
 
@@ -64,7 +66,8 @@ class Menu(QFrame):
 
             QMessageBox.information(self, "Load Config", f"Config loaded successfully from {file_path}!")
 
-
+    def runSimulation(self):
+        print('start to run simulation')
 
 
 
@@ -115,6 +118,33 @@ class Menu(QFrame):
         main_layout.addWidget(loadConfigButton)
         # Set custom style using setStyleSheet
         loadConfigButton.setStyleSheet(f"""
+            QPushButton {{
+                background-color: {button_color}; /* white */
+                color: black;
+                border: none;
+                padding: 3px 5px;
+                text-align: center;
+                text-decoration: none;
+                display: inline-block;
+                margin: 3px;
+                cursor: pointer;
+                border-radius: 5px;
+                height: 20px;
+                width: 100px;
+            }}
+            QPushButton:hover {{
+                background-color: #45a049; /* Darker green */
+            }}
+            QPushButton:pressed {{
+                background-color: #3e8e41; /* Even darker green */
+            }}
+        """)
+
+        runConfigButton = QPushButton("Run simulation", self)
+        runConfigButton.clicked.connect(self.runSimulation)  # Connect to load_config function
+        main_layout.addWidget(runConfigButton)
+        # Set custom style using setStyleSheet
+        runConfigButton.setStyleSheet(f"""
             QPushButton {{
                 background-color: {button_color}; /* white */
                 color: black;

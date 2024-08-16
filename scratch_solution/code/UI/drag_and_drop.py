@@ -12,7 +12,8 @@ from PyQt5.QtGui import QPainter, QPen, QColor
 from ..elements.gatter.and_gatter import AndButton
 from ..elements.gatter.or_gatter import OrButton
 from ..elements.gatter.parent_gatter import GatterButton
-from ..helper.global_variables import wireList, gateList, button_color, background_color
+from ..elements.startElement import startElement
+from ..helper.global_variables import wireList, gateList, button_color, background_color, startPoints
 from ..helper.functions import is_point_on_line
 from ..elements.wire import Wire
 
@@ -111,8 +112,17 @@ class DropArea(QFrame):
 
     # creates a gatterbutton and adds it to the UI
     def addWire(self, wire_data):
-        wire = Wire(self, QPoint(wire_data['startPoint_x'], wire_data['startPoint_y']), QPoint(wire_data['endPoint_x'], wire_data['endPoint_y']), wire_data['state'], wire_data['startpointGates'], wire_data['endpointGates'])
+        wire = Wire(self, QPoint(wire_data['startPoint_x'], wire_data['startPoint_y']), QPoint(wire_data['endPoint_x'],
+                    wire_data['endPoint_y']), wire_data['state'], wire_data['startpointGates'], wire_data['endpointGates'], wire_data['connectedToStartPoint'], wire_data['startPoint'])
         wireList[wire.id] = wire
-        gateList[wire_data['startpointGates'][0]].addOutputWire(wire.id) # right now there are just one gatter per endpoint, see #TODO in wireclass
+        if wire_data['connectedToStartPoint']:
+            startPoints[wire_data['startPoint']].addOutputWire(wire.id)
+        else:
+            gateList[wire_data['startpointGates'][0]].addOutputWire(wire.id) # right now there are just one gatter per endpoint, see #TODO in wireclass
         gateList[wire_data['endpointGates'][0]].addInputWire(wire.id) # right now there are just one gatter per endpoint, see #TODO in wireclass
         self.update()
+
+    def addStartButton(self, state, position_x, position_y):
+        startPoint = startElement(self, state, [])
+        startPoint.move(QPoint(position_x, position_y))
+        startPoint.show()
