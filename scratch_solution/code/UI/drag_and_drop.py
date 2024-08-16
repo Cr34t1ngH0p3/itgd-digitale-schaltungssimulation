@@ -54,12 +54,13 @@ class DropArea(QFrame):
 
     # if gatter is clicked you can create a new wire between two gatters
     def label_clicked(self, label, side):
-        if self.source_label is None:
+        if self.source_label is None: #
             if side == "output":
                 # Select the first label (source) only if it's the output side
                 self.source_label = label
                 self.source_side = side
                 self.source_label.setStyleSheet("background-color: yellow; border: 1px solid black;")
+
         else:
             if side == "input" and label != self.source_label:
                 # Connect only if the second label's side is input and it's a different label
@@ -67,6 +68,9 @@ class DropArea(QFrame):
                 self.source_label.setStyleSheet(f"background-color: {button_color}; border: 1px solid black;")
                 self.source_label = None  # Reset the selection
                 self.source_side = None
+
+    def updateUI(self):
+        self.update()
 
     def draw_line(self, source, destination):
         # Calculate global positions
@@ -79,7 +83,7 @@ class DropArea(QFrame):
         source_in_drop = self.mapFromGlobal(source_pos)
         destination_in_drop = self.mapFromGlobal(destination_pos)
         # create new wire
-        newWire = Wire(self, source_in_drop, destination_in_drop, 0,[], [])
+        newWire = Wire(self, source_in_drop, destination_in_drop, source.getState(),[], [])
         # add wire to the two gates
         source.addOutputWire(newWire.id)
         destination.addInputWire(newWire.id)
@@ -94,6 +98,7 @@ class DropArea(QFrame):
         # Draw all stored lines
         for wireId, wire in wireList.items():
             painter.drawLine(wire.line)
+
     # mouse press on the droparea, if it is near a wire and it was a right click, this wire gets deleted
     def mousePressEvent(self, event):
         if event.button() == Qt.RightButton:

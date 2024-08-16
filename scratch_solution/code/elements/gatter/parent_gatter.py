@@ -37,8 +37,13 @@ class GatterButton(QLabel):
         self.start_pos = QPoint(0, 0)
         # self.start_pos = QPoint(position_x, position_y) # set it always to 0,0
         self.is_in_drop_area = is_in_drop_area
+        self.outputValue = 0
         if self.is_in_drop_area:
             gateList[self.id] = self
+
+    # get actual state
+    def getState(self):
+        return self.outputValue
 
     # tell gatter that the wire is connected
     # tell the wire that its endpoint is connected to this input
@@ -143,7 +148,7 @@ class GatterButton(QLabel):
 
         # Label the sides (optional)
         painter.drawText(QRect(0, 0, mid_x, self.height()), Qt.AlignCenter, "IN")
-        painter.drawText(QRect(mid_x, 0, self.width() - mid_x, self.height()), Qt.AlignCenter, "OUT")
+        painter.drawText(QRect(mid_x, 0, self.width() - mid_x, self.height()), Qt.AlignCenter, f"OUT: {self.outputValue}")
 
     def deleteGatter(self):
         for InputWireId in self.inputWireList:
@@ -156,6 +161,7 @@ class GatterButton(QLabel):
                     wireList[wireId].deleteWire()
 
         gateList.pop(self.id)
+        self.parent().updateUI()
 
         self.deleteLater()
         self.setParent(None)

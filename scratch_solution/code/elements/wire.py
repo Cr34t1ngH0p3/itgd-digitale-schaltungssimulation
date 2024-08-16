@@ -49,6 +49,8 @@ class Wire(QWidget):
 
     def setState(self, state):
         self.state = state
+        for gatterId in self.endpointGateList:
+            gateList[gatterId].updateState()
 
     def addOutputGate(self, gateId):
         self.endpointGateList.append(gateId)
@@ -60,7 +62,8 @@ class Wire(QWidget):
         self.startpointGateList.append(gateId)
 
     def removeInputGate(self, gateId):
-        self.startpointGateList.remove(gateId)
+        if gateId in self.startpointGateList:
+            self.startpointGateList.remove(gateId)
 
     # used if wire connects directly to the startpoints
     def addToStartPointElement(self, startPointId):
@@ -85,7 +88,7 @@ class Wire(QWidget):
         for gateId in self.endpointGateList:
             gateList[gateId].deleteInputWire(self.id)
         if self.connectedToStartPoint:
-            startPoints[self.startPoint].deleteOutpuWire(self.id)
+            startPoints[self.startPoint].deleteOutputWire(self.id)
         else:
             for gateId in self.startpointGateList:
                 gateList[gateId].deleteOutputWire(self.id)

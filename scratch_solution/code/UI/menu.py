@@ -66,9 +66,14 @@ class Menu(QFrame):
 
             QMessageBox.information(self, "Load Config", f"Config loaded successfully from {file_path}!")
 
+    # run simulation by "updating" every wire that is connected to one of the startpoints, this should trigger the update function of all connected gatter and so on
+    # TODO 1.check for circle, 2.run again if something changes, 3.maybe do continues updates (like a ticke rate)
     def runSimulation(self):
         print('start to run simulation')
-
+        print()
+        for id, startPoint in startPoints.items():
+            for wireId in startPoint.outWire:
+                wireList[wireId].setState(id)
 
 
     def __init__(self, parent, drop_area):

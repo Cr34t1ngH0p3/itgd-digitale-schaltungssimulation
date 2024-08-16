@@ -35,6 +35,10 @@ class startElement(QLabel):
         self.start_pos = QPoint(0, 0)
         startPoints[self.id] = self
 
+    # get actual state
+    def getState(self):
+        return self.state
+
     def addOutputWire(self, wireId):
         self.outWire.append(wireId)
         if wireList[wireId]:
