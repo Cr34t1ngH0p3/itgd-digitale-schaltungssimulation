@@ -73,7 +73,7 @@ class Menu(QFrame):
         self.dropArea = drop_area
         self.setFrameStyle(QFrame.Sunken | QFrame.StyledPanel)
         self.setAcceptDrops(True)
-        self.setStyleSheet(f"background-color: {background_color};")
+        self.setStyleSheet(f"background-color: {background_color}; color: white")
         self.setFixedSize(400, 50)
         self.source_label = None  # Track the first selected label (source)
         self.source_side = None  # Track whether the source is input or output
