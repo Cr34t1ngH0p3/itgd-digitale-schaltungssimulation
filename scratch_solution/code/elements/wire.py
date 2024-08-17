@@ -26,7 +26,7 @@ class Wire(QWidget):
     def __init__(self, parent, point1, point2, state=0, endpoint_gate_list=[], startpoint_gate_list=[], connected_to_start_point=False, starelement_point=0):
         super().__init__(parent)
         print('created wire')
-        globalSimulationRun()
+        #globalSimulationRun()
         print(point1)
         print(point2)
         Wire.counter += 1

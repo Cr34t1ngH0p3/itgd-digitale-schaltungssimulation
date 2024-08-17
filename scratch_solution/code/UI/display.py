@@ -8,11 +8,14 @@
 
 
 from PyQt5.QtWidgets import QMainWindow, QVBoxLayout, QWidget, QPushButton, QHBoxLayout
+from PyQt5.QtCore import QTimer
 
 from ..UI.drag_and_drop import DropArea
 from ..UI.menu import Menu
 from ..elements.gatter.or_gatter import OrButton
 from ..elements.gatter.and_gatter import AndButton
+from ..helper.global_variables import isTic, seconds
+from ..helper.functions import globalSimulationRun
 
 # Main window
 class MainWindow(QMainWindow):
@@ -20,6 +23,12 @@ class MainWindow(QMainWindow):
         super().__init__()
         self.setWindowTitle("Drag and Drop Example with Inputs and Outputs")
         self.setGeometry(100, 100, 500, 500)
+
+        #Tic creation
+        if (isTic):
+            self.timer = QTimer(self)
+            self.timer.timeout.connect(self.tick_function)
+            self.timer.start(seconds)
 
         main_layout = QVBoxLayout()
 
@@ -38,6 +47,9 @@ class MainWindow(QMainWindow):
         container = QWidget()
         container.setLayout(main_layout)
         self.setCentralWidget(container)
+
+    def tick_function(self):
+        globalSimulationRun()
 
     # there should only exist one with ON and one with OFF
     def createStartPoints(self, drop_area):

@@ -173,7 +173,7 @@ class GatterButton(QLabel):
 
         print('Gatter is deleted')
 
-        globalSimulationRun()
+        #globalSimulationRun()
 
 
 
