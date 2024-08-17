@@ -8,14 +8,26 @@ class OrButton(GatterButton):
      #   self.inputButton.text('OR')
 
     def updateState(self):
+        sum = 0
         for wireId in self.inputWireList:
-            if (wireList[wireId].getState() == 1):
-                self.outputValue = 1
-                for wireId in self.outWire:
-                    wireList[wireId].setState(1)
-            self.update()
-            return
-        self.outputValue = 0
+            sum = sum + wireList[wireId].getState()
+        if sum > 0:
+            self.outputValue = 1
+        else:
+            self.outputValue = 0
         for wireId in self.outWire:
-            wireList[wireId].setState(0)
+            wireList[wireId].setState(self.outputValue)
+
+
+#        for wireId in self.inputWireList:
+#            if (wireList[wireId].getState() == 1):
+#                self.outputValue = 1
+#                for wireId in self.outWire:
+#                    wireList[wireId].setState(1)
+#            self.update()
+#            return
+#        self.outputValue = 0
+#        for wireId in self.outWire:
+#            wireList[wireId].setState(0)
+
         self.update()
