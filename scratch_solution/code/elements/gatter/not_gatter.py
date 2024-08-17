@@ -9,14 +9,16 @@ class NotButton(GatterButton):
         #self.inputButton.text('AND')
 
     def updateState(self):
-        self.outputValue = 1
+
+        #Yeah, I understand, that there is only one input value here and it is possible to make it easier, but anyway :)
+        sum = 0
         for wireId in self.inputWireList:
-            if (wireList[wireId].getState() == 0):
-                self.outputValue = 0
-                for wireId in self.outWire:
-                    wireList[wireId].setState(0)
-                self.update()
-        if self.outputValue == 1:
-            for wireId in self.outWire:
-                wireList[wireId].setState(1)
+            sum = sum + wireList[wireId].getState()
+        if sum > 0:
+            self.outputValue = 0
+        else:
+            self.outputValue = 1
+        for wireId in self.outWire:
+            wireList[wireId].setState(self.outputValue)
+
         self.update()
