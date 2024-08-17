@@ -14,6 +14,7 @@ from PyQt5.QtCore import Qt, QLineF
 from PyQt5.QtGui import QPainter, QPen
 
 from ..helper.global_variables import wireList, gateList, startPoints
+from ..helper.functions import globalSimulationRun
 
 
 class Wire(QWidget):
@@ -25,6 +26,7 @@ class Wire(QWidget):
     def __init__(self, parent, point1, point2, state=0, endpoint_gate_list=[], startpoint_gate_list=[], connected_to_start_point=False, starelement_point=0):
         super().__init__(parent)
         print('created wire')
+        globalSimulationRun()
         print(point1)
         print(point2)
         Wire.counter += 1
@@ -93,7 +95,7 @@ class Wire(QWidget):
             for gateId in self.startpointGateList:
                 gateList[gateId].deleteOutputWire(self.id)
         wireList.pop(self.id)
-        print('del wire')
+        print('sth changes')
         del self
 
     # write a nice json format to store gatterobject in file

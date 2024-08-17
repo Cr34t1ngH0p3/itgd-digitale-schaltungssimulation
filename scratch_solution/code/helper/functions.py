@@ -4,6 +4,8 @@
 
 from math import sqrt
 
+from .global_variables import startPoints, wireList
+
 def distance_to_line_segment(line, point):
     """
     Calculate the shortest distance from a point to a line segment.
@@ -55,3 +57,10 @@ def is_point_on_line(line, point, tolerance=10.0):
     """
     distance = distance_to_line_segment(line, point)
     return distance <= tolerance
+
+def globalSimulationRun():
+    print('start to run simulation')
+    print()
+    for id, startPoint in startPoints.items():
+        for wireId in startPoint.outWire:
+            wireList[wireId].setState(id)

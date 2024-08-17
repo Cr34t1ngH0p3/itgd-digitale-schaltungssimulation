@@ -12,8 +12,8 @@ from PyQt5.QtWidgets import QFrame, QPushButton, QHBoxLayout, QMessageBox, QFile
 
 from ..elements.startElement import startElement
 from ..helper.global_variables import wireList, gateList, background_color, button_color, startPoints
-from ..elements.gatter.parent_gatter import GatterButton
-from .drag_and_drop import DropArea
+#from ..elements.gatter.parent_gatter import GatterButton
+#from .drag_and_drop import DropArea
 
 
 class Menu(QFrame):

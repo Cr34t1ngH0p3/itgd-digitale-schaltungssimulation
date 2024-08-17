@@ -15,6 +15,7 @@ from PyQt5.QtCore import Qt, QMimeData, QPoint, QRect, pyqtSignal
 from PyQt5.QtGui import QDrag, QPixmap, QPainter, QPen
 
 from ...helper.global_variables import wireList, gateList, button_color
+from ...helper.functions import globalSimulationRun
 
 # Draggable widget with input and output sides
 class GatterButton(QLabel):
@@ -165,11 +166,14 @@ class GatterButton(QLabel):
 
         self.deleteLater()
         self.setParent(None)
-        
+
+
 
         del self
 
         print('Gatter is deleted')
+
+        globalSimulationRun()
 
 
 

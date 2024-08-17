@@ -16,6 +16,7 @@ from ..elements.startElement import startElement
 from ..helper.global_variables import wireList, gateList, button_color, background_color, startPoints
 from ..helper.functions import is_point_on_line
 from ..elements.wire import Wire
+from ..helper.functions import globalSimulationRun
 
 # Droppable area with connection handling
 class DropArea(QFrame):
@@ -51,6 +52,8 @@ class DropArea(QFrame):
 
         self.update()  # Update the widget to redraw lines
         event.acceptProposedAction()
+
+        #globalSimulationRun()
 
     # if gatter is clicked you can create a new wire between two gatters
     def label_clicked(self, label, side):
