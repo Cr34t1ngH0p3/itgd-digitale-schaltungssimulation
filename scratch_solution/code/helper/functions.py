@@ -59,8 +59,6 @@ def is_point_on_line(line, point, tolerance=10.0):
     return distance <= tolerance
 
 def globalSimulationRun():
-    print('start to run simulation')
-    print()
     for id, startPoint in startPoints.items():
         for wireId in startPoint.outWire:
             wireList[wireId].setState(id)

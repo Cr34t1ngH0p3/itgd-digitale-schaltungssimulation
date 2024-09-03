@@ -20,17 +20,30 @@ from ..helper.functions import globalSimulationRun
 class Wire(QWidget):
     counter = 0
     lines = []
+
+    @classmethod
+    def get_counter(cls):
+        return cls.counter
+
+    @classmethod
+    def set_counter(cls, counter):
+        cls.counter = counter
+
     #  TODO discuss: wires werden immer neu erzeugt und haben damit nur ein gatter, brauchen wir listen oder soll bei
     #  erzeugen eines wires bei einem gatter, welches bereit ein output wire hat dieses verwendet werden und statt ein
     #  neues zu erzeugen einfach bei dem bestehenden wire das zweite endgatter hinzufügen?
-    def __init__(self, parent, point1, point2, state=0, endpoint_gate_list=[], startpoint_gate_list=[], connected_to_start_point=False, starelement_point=0):
+    def __init__(self, parent, point1, point2, state=0, endpoint_gate_list=[], startpoint_gate_list=[], connected_to_start_point=False, starelement_point=0, wire_id=None):
         super().__init__(parent)
         print('created wire')
         #globalSimulationRun()
         print(point1)
         print(point2)
-        Wire.counter += 1
-        self.id = Wire.counter
+        if wire_id: # Usefull for laoding configfiles or implementing a "back" button for deleted elements
+            # TODO check if wire with this id exist already.
+            self.id = wire_id
+        else:
+            Wire.counter += 1
+            self.id = Wire.counter
         self.state = state
         self.endpointGateList = endpoint_gate_list
         self.startpointGateList = startpoint_gate_list

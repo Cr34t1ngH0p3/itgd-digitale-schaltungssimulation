@@ -23,12 +23,26 @@ class GatterButton(QLabel):
     inputClickEvent = pyqtSignal()
     outputClickEvent = pyqtSignal()
 
-    # TODO, use self.start_position when creating object, right now we need to use self.move after every creation
-    def __init__(self, parent, text, input_wires=[], output_wire=[], position_x=100, position_y=0, is_in_drop_area=False):
-        super().__init__(text, parent)
+    @classmethod
+    def get_counter(cls):
+        return cls.counter
 
-        GatterButton.counter += 1
-        self.id = GatterButton.counter
+    @classmethod
+    def set_counter(cls, counter):
+        cls.counter = counter
+
+    # TODO, use self.start_position when creating object, right now we need to use self.move after every creation
+    def __init__(self, parent, text, input_wires=[], output_wire=[], position_x=100, position_y=0, is_in_drop_area=False, gatter_id=None):
+        super().__init__(text, parent)
+        print('-----------gatter id')
+        print(gatter_id)
+        if gatter_id: # Usefull for laoding configfiles or implementing a "back" button for deleted elements
+            # TODO check if wire with this id exist already.
+            self.id = gatter_id
+        else:
+            print('increade id')
+            GatterButton.counter += 1
+            self.id = GatterButton.counter
         print('New gatter id:', self.id)
         self.name = text
         self.inputWireList = input_wires
@@ -49,7 +63,8 @@ class GatterButton(QLabel):
     # tell gatter that the wire is connected
     # tell the wire that its endpoint is connected to this input
     def addInputWire(self, wireId):
-        self.inputWireList.append(wireId)
+        if wireId not in self.inputWireList:
+            self.inputWireList.append(wireId)
         if wireList[wireId]:
             wireList[wireId].addOutputGate(self.id)
 
@@ -60,7 +75,8 @@ class GatterButton(QLabel):
             wireList[wireId].removeOutputGate(self.id)
 
     def addOutputWire(self, wireId):
-        self.outWire.append(wireId)
+        if wireId not in self.outWire:
+            self.outWire.append(wireId)
         if wireList[wireId]:
             wireList[wireId].addInputGate(self.id)
 
@@ -151,8 +167,11 @@ class GatterButton(QLabel):
         painter.drawText(QRect(0, 0, mid_x, self.height()), Qt.AlignCenter, "IN")
         painter.drawText(QRect(mid_x, 0, self.width() - mid_x, self.height()), Qt.AlignCenter, f"OUT: {self.outputValue}")
 
-    def deleteGatter(self):
+    def updateState(self):
+        return
 
+    def deleteGatter(self):
+        print('delete gatter')
         inputWireListLength = len(self.inputWireList)
         wireListLength = len(list(wireList.keys()))
 
@@ -168,7 +187,9 @@ class GatterButton(QLabel):
                     keyToDelete.append(temp)
 
         for key in keyToDelete:
-            wireList[key].deleteWire()
+            if key in wireList and wireList[key]:
+                wireList[key].deleteWire()
+
 
         outWireListLength = len(self.outWire)
         wireListLength = len(list(wireList.keys()))
@@ -189,6 +210,7 @@ class GatterButton(QLabel):
 
         gateList.pop(self.id)
         self.parent().updateUI()
+        self.hide()
 
         self.deleteLater()
         self.setParent(None)
