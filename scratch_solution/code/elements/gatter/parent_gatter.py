@@ -152,22 +152,46 @@ class GatterButton(QLabel):
         painter.drawText(QRect(mid_x, 0, self.width() - mid_x, self.height()), Qt.AlignCenter, f"OUT: {self.outputValue}")
 
     def deleteGatter(self):
-        for InputWireId in self.inputWireList:
-            for wireId in list(wireList.keys()):
-                if (InputWireId == wireId):
-                    wireList[wireId].deleteWire()
-        for OutputWireId in self.outWire:
-            for wireId in list(wireList.keys()):
-                if (OutputWireId == wireId):
-                    wireList[wireId].deleteWire()
+
+        inputWireListLength = len(self.inputWireList)
+        wireListLength = len(list(wireList.keys()))
+
+        wireListBuffer = wireList
+        inputWireListBuffer = self.inputWireList
+
+        keyToDelete = []
+
+        for inputWireId in range(inputWireListLength):
+            for wireListId in range(wireListLength):
+                if list(wireListBuffer.keys())[wireListId] == inputWireListBuffer[inputWireId]:
+                    temp = inputWireListBuffer[inputWireId]
+                    keyToDelete.append(temp)
+
+        for key in keyToDelete:
+            wireList[key].deleteWire()
+
+        outWireListLength = len(self.outWire)
+        wireListLength = len(list(wireList.keys()))
+
+        wireListBuffer = wireList
+        outWireListBuffer = self.outWire
+
+        keyToDelete = []
+
+        for outWireId in range(outWireListLength):
+            for wireListId in range(wireListLength):
+                if list(wireListBuffer.keys())[wireListId] == outWireListBuffer[outWireId]:
+                    temp = outWireListBuffer[outWireId]
+                    keyToDelete.append(temp)
+
+        for key in keyToDelete:
+            wireList[key].deleteWire()
 
         gateList.pop(self.id)
         self.parent().updateUI()
 
         self.deleteLater()
         self.setParent(None)
-
-
 
         del self
 
