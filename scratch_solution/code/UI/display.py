@@ -12,6 +12,7 @@ from PyQt5.QtCore import QTimer
 
 from ..UI.drag_and_drop import DropArea
 from ..UI.menu import Menu
+from ..elements.gatter.not_gatter import NotButton
 from ..elements.gatter.or_gatter import OrButton
 from ..elements.gatter.and_gatter import AndButton
 from ..helper.global_variables import isTic, seconds
@@ -63,10 +64,12 @@ class MainWindow(QMainWindow):
         # Create the buttons
         self.and_button = AndButton(parent=self, name="&")
         self.or_button = OrButton(parent=self, name="|")
+        self.nor_button = NotButton(parent=self, name="-")
 
         # Add the buttons to the horizontal layout
         button_layout.addWidget(self.and_button)
         button_layout.addWidget(self.or_button)
+        button_layout.addWidget(self.nor_button)
 
         # Add the horizontal layout to the main layout
         main_layout.addLayout(button_layout)

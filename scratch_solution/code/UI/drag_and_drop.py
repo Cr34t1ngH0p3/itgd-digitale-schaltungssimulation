@@ -5,11 +5,12 @@
 ########################################################
 
 
-from PyQt5.QtWidgets import QFrame
+from PyQt5.QtWidgets import QFrame, QMessageBox
 from PyQt5.QtCore import Qt, QPoint
 from PyQt5.QtGui import QPainter, QPen, QColor
 
 from ..elements.gatter.and_gatter import AndButton
+from ..elements.gatter.not_gatter import NotButton
 from ..elements.gatter.or_gatter import OrButton
 from ..elements.gatter.parent_gatter import GatterButton
 from ..elements.startElement import startElement
@@ -40,8 +41,12 @@ class DropArea(QFrame):
                 # Create a new gatter in the drop area only if it's dragged from outside
                 if isinstance(source, AndButton):
                     gatter = AndButton(parent=self, name="&", inList=[], outList=[], position_x=event.pos().x(), position_y=event.pos().y(), is_in_drop_area=True)
-                else:
+                elif isinstance(source, OrButton):
                     gatter = OrButton(parent=self, name="|", inList=[], outList=[], position_x=event.pos().x(), position_y=event.pos().y(), is_in_drop_area=True)
+                elif isinstance(source, NotButton):
+                    gatter = NotButton(parent=self, name="-", inList=[], outList=[], position_x=event.pos().x(), position_y=event.pos().y(), is_in_drop_area=True)
+                else:
+                    QMessageBox.critical(self, "Error", f"Source does not match any instance type.")
                 gatter.move(event.pos())
                 gatter.is_in_drop_area = True
                 gatter.show() # display the new gatter
