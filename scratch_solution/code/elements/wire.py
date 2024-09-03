@@ -34,10 +34,7 @@ class Wire(QWidget):
     #  neues zu erzeugen einfach bei dem bestehenden wire das zweite endgatter hinzufügen?
     def __init__(self, parent, point1, point2, state=0, endpoint_gate_list=[], startpoint_gate_list=[], connected_to_start_point=False, starelement_point=0, wire_id=None):
         super().__init__(parent)
-        print('created wire')
         #globalSimulationRun()
-        print(point1)
-        print(point2)
         if wire_id: # Usefull for laoding configfiles or implementing a "back" button for deleted elements
             # TODO check if wire with this id exist already.
             self.id = wire_id
@@ -68,13 +65,15 @@ class Wire(QWidget):
             gateList[gatterId].updateState()
 
     def addOutputGate(self, gateId):
-        self.endpointGateList.append(gateId)
+        if gateId not in self.endpointGateList:
+            self.endpointGateList.append(gateId)
 
     def removeOutputGate(self, gateId):
         self.endpointGateList.remove(gateId)
 
     def addInputGate(self, gateId):
-        self.startpointGateList.append(gateId)
+        if gateId not in self.startpointGateList:
+            self.startpointGateList.append(gateId)
 
     def removeInputGate(self, gateId):
         if gateId in self.startpointGateList:
@@ -108,7 +107,6 @@ class Wire(QWidget):
             for gateId in self.startpointGateList:
                 gateList[gateId].deleteOutputWire(self.id)
         wireList.pop(self.id)
-        print('sth changes')
         del self
 
     # write a nice json format to store gatterobject in file

@@ -34,16 +34,12 @@ class GatterButton(QLabel):
     # TODO, use self.start_position when creating object, right now we need to use self.move after every creation
     def __init__(self, parent, text, input_wires=[], output_wire=[], position_x=100, position_y=0, is_in_drop_area=False, gatter_id=None):
         super().__init__(text, parent)
-        print('-----------gatter id')
-        print(gatter_id)
         if gatter_id: # Usefull for laoding configfiles or implementing a "back" button for deleted elements
-            # TODO check if wire with this id exist already.
+            # TODO check if wire with this id exist already in gatelist.
             self.id = gatter_id
         else:
-            print('increade id')
             GatterButton.counter += 1
             self.id = GatterButton.counter
-        print('New gatter id:', self.id)
         self.name = text
         self.inputWireList = input_wires
         self.outWire = output_wire # dictonary with {wireId: wireElement, ....}
@@ -114,7 +110,7 @@ class GatterButton(QLabel):
     # if button pressed with right click there is the option to create a new wire to an other gatter
     def mousePressEvent(self, event):
         #from scratch_solution.UI.drag_and_drop import DropArea
-
+        print(self.outWire)
         if event.button() == Qt.LeftButton:
             self.start_pos = event.pos() # store start (acual position before move)
         elif event.button() == Qt.RightButton:

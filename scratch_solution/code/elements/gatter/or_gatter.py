@@ -2,8 +2,8 @@ from .parent_gatter import GatterButton
 from ...helper.global_variables import wireList
 
 class OrButton(GatterButton):
-    def __init__(self, name, inList=[], outList=[], parent=None, position_x=0, position_y=0, is_in_drop_area=False):
-        super().__init__(parent, name, inList, outList, position_x, position_y, is_in_drop_area)
+    def __init__(self, name, inList=[], outList=[], parent=None, position_x=0, position_y=0, is_in_drop_area=False, gatter_id=None):
+        super().__init__(parent, name, inList, outList, position_x, position_y, is_in_drop_area, gatter_id)
         self.update()
      #   self.inputButton.text('OR')
 

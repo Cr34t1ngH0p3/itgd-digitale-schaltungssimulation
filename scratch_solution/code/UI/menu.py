@@ -12,6 +12,7 @@ from PyQt5.QtWidgets import QFrame, QPushButton, QHBoxLayout, QMessageBox, QFile
 
 from .drag_and_drop import DropArea
 from ..elements.startElement import startElement
+from ..helper.functions import globalSimulationRun
 from ..helper.global_variables import wireList, gateList, background_color, button_color, startPoints
 from ..elements.gatter.parent_gatter import GatterButton
 from ..elements.wire import Wire
@@ -92,9 +93,7 @@ class Menu(QFrame):
                 wire_data = entry['wire']
                 self.dropArea.addWire(wire_data)
 
-
-            print(wireList)
-            print(gateList)
+            globalSimulationRun()
 
             QMessageBox.information(self, "Load Config", f"Config loaded successfully from {file_path}!")
 

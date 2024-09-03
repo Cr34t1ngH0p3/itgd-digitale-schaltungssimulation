@@ -35,6 +35,7 @@ class DropArea(QFrame):
             event.acceptProposedAction()
 
     def dropEvent(self, event):
+        gatter = None
         if event.mimeData().hasText():
             source = event.source()
             if isinstance(source, GatterButton) and not source.is_in_drop_area:
@@ -117,7 +118,13 @@ class DropArea(QFrame):
 
     # creates a gatterbutton and adds it to the UI
     def addGatterButton(self, gatter_data):
-        gatter = GatterButton(self, gatter_data['name'], gatter_data['inputWireList'], gatter_data['outWire'], gatter_data['position_x'], gatter_data['position_y'], False, gatter_data['id'])
+        gatter = None
+        if gatter_data['name'] == '&':
+            gatter = AndButton(parent=self, name=gatter_data['name'], inList=gatter_data['inputWireList'], outList=gatter_data['outWire'], position_x=gatter_data['position_x'], position_y=gatter_data['position_y'], is_in_drop_area=False, gatter_id=gatter_data['id'])
+        elif gatter_data['name'] == '|':
+            gatter = OrButton(parent=self, name=gatter_data['name'], inList=gatter_data['inputWireList'], outList=gatter_data['outWire'], position_x=gatter_data['position_x'], position_y=gatter_data['position_y'], is_in_drop_area=False, gatter_id=gatter_data['id'])
+        elif gatter_data['name'] == '-':
+            gatter = NotButton(parent=self, name=gatter_data['name'], inList=gatter_data['inputWireList'], outList=gatter_data['outWire'], position_x=gatter_data['position_x'], position_y=gatter_data['position_y'], is_in_drop_area=False, gatter_id=gatter_data['id'])
         gatter.is_in_drop_area = True
         gatter.move(QPoint(gatter_data['position_x'], gatter_data['position_y']))
         gateList[gatter.id] = gatter
@@ -126,14 +133,12 @@ class DropArea(QFrame):
     # creates a gatterbutton and adds it to the UI
     def addWire(self, wire_data):
         wire = Wire(self, QPoint(wire_data['startPoint_x'], wire_data['startPoint_y']), QPoint(wire_data['endPoint_x'],
-                    wire_data['endPoint_y']), wire_data['state'], wire_data['startpointGates'], wire_data['endpointGates'], wire_data['connectedToStartPoint'], wire_data['startPoint'], wire_data['id'])
+                    wire_data['endPoint_y']), wire_data['state'], wire_data['endpointGates'], wire_data['startpointGates'], wire_data['connectedToStartPoint'], wire_data['startPoint'], wire_data['id'])
         wireList[wire.id] = wire
         if wire_data['connectedToStartPoint']:
             startPoints[wire_data['startPoint']].addOutputWire(wire.id)
         else:
             gateList[wire_data['startpointGates'][0]].addOutputWire(wire.id) # right now there are just one gatter per endpoint, see #TODO in wireclass
-        print(gateList)
-        print(wire_data['endpointGates'][0])
         gateList[wire_data['endpointGates'][0]].addInputWire(wire.id) # right now there are just one gatter per endpoint, see #TODO in wireclass
         self.update()
 
