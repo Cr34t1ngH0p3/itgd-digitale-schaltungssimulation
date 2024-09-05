@@ -56,6 +56,15 @@ class GatterButton(QLabel):
     def getState(self):
         return self.outputValue
 
+    # set actual state
+    def setState(self, state):
+        self.outputValue = state
+        self.informWireAboutState()
+
+    def informWireAboutState(self):
+        for wireId in self.outWire:
+            wireList[wireId].setState(self.outputValue)
+
     # tell gatter that the wire is connected
     # tell the wire that its endpoint is connected to this input
     def addInputWire(self, wireId):
@@ -63,12 +72,15 @@ class GatterButton(QLabel):
             self.inputWireList.append(wireId)
         if wireList[wireId]:
             wireList[wireId].addOutputGate(self.id)
+        self.updateState()
+
 
     # delete the wire from self-inputlist and tell wire it got disconnected
     def deleteInputWire(self, wireId):
         self.inputWireList.remove(wireId)
         if wireList[wireId]:
             wireList[wireId].removeOutputGate(self.id)
+        self.updateState()
 
     def addOutputWire(self, wireId):
         if wireId not in self.outWire:

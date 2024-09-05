@@ -12,11 +12,12 @@ class AndButton(GatterButton):
         for wireId in self.inputWireList:
             if (wireList[wireId].getState() == 0):
                 self.outputValue = 0
-                for wireId in self.outWire:
-                    wireList[wireId].setState(0)
+                self.informWireAboutState()
+
                 self.update()
                 return
+
         self.outputValue = 1
-        for wireId in self.outWire:
-            wireList[wireId].setState(1)
+        self.informWireAboutState()
+
         self.update()

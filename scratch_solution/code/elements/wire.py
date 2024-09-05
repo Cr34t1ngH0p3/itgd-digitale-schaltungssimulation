@@ -9,6 +9,7 @@
 #                                                                                   #
 #####################################################################################
 
+import time
 from PyQt5.QtWidgets import QWidget
 from PyQt5.QtCore import Qt, QLineF
 from PyQt5.QtGui import QPainter, QPen
@@ -52,6 +53,7 @@ class Wire(QWidget):
         self.startPoint = starelement_point
 
         self.line = QLineF(point1, point2)
+        self.parent = parent
 
         self.update()
 
@@ -59,10 +61,14 @@ class Wire(QWidget):
     def getState(self):
         return self.state
 
-    def setState(self, state):
-        self.state = state
-        for gatterId in self.endpointGateList:
-            gateList[gatterId].updateState()
+    def setState(self, state, force=False):
+        print(self.id, state, self, force)
+        if self.state != state or force:
+          #  time.sleep(1)
+            self.state = state
+            for gatterId in self.endpointGateList:
+
+                gateList[gatterId].updateState()
 
     def addOutputGate(self, gateId):
         if gateId not in self.endpointGateList:
@@ -91,12 +97,10 @@ class Wire(QWidget):
     def updateStartPoint(self, newPoint):
         self.line.setP1(newPoint)
         self.point1 = newPoint
-        self.update()
 
     def updateEndPoint(self, newPoint):
         self.line.setP2(newPoint)
         self.point2 = newPoint
-        self.update()
 
     def deleteWire(self):
         for gateId in self.endpointGateList:
@@ -133,7 +137,6 @@ class Wire(QWidget):
 
 
     def paintEvent(self, event):
-        print('Paitn event')
         super().paintEvent(event)
         painter = QPainter(self)
         pen = QPen(Qt.black, 2)
@@ -141,5 +144,4 @@ class Wire(QWidget):
 
         # Draw all stored lines
         for line in Wire.lines:
-            print('paint line')
             painter.drawLine(line)

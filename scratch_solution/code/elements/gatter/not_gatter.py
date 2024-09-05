@@ -18,7 +18,8 @@ class NotButton(GatterButton):
             self.outputValue = 0
         else:
             self.outputValue = 1
-        for wireId in self.outWire:
-            wireList[wireId].setState(self.outputValue)
+
+        self.informWireAboutState()
+
 
         self.update()

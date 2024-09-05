@@ -14,7 +14,7 @@ from ..elements.gatter.not_gatter import NotButton
 from ..elements.gatter.or_gatter import OrButton
 from ..elements.gatter.parent_gatter import GatterButton
 from ..elements.startElement import startElement
-from ..helper.global_variables import wireList, gateList, button_color, background_color, startPoints
+from ..helper.global_variables import wireList, gateList, button_color, background_color, startPoints, active_wire_color
 from ..helper.functions import is_point_on_line
 from ..elements.wire import Wire
 from ..helper.functions import globalSimulationRun
@@ -63,20 +63,41 @@ class DropArea(QFrame):
 
     # if gatter is clicked you can create a new wire between two gatters
     def label_clicked(self, label, side):
-        if self.source_label is None: #
-            if side == "output":
-                # Select the first label (source) only if it's the output side
+        print("label clicked")
+        print(side)
+        if side == "output":
+            if self.source_label != None: # input side got pressed before -> draw line
+                if self.source_side == "output" or self.source_label == label: # got pressed before -> overwrite source
+                    self.source_label.setStyleSheet(f"background-color: {button_color}; border: 1px solid black;") # set color back of old pressed gatter
+                    self.source_label = label
+                    self.source_label.setStyleSheet("background-color: yellow; border: 1px solid black;")
+                elif self.source_side == "input": # draw line
+                    self.draw_line(label, self.source_label)
+                    self.source_label.setStyleSheet(f"background-color: {button_color}; border: 1px solid black;")
+                    self.source_label = None  # Reset the selection
+                    self.source_side = None
+            else: # nothing pressed before, mark source
                 self.source_label = label
-                self.source_side = side
                 self.source_label.setStyleSheet("background-color: yellow; border: 1px solid black;")
-
+                self.source_side = side
+        elif side == "input":
+            if self.source_label != None: # input side got pressed before -> draw line
+                if self.source_side == "input" or self.source_label == label: # got pressed before -> overwrite source
+                    self.source_label.setStyleSheet(f"background-color: {button_color}; border: 1px solid black;") # set color back of old pressed gatter
+                    self.source_label = label
+                    self.source_label.setStyleSheet("background-color: green; border: 1px solid black;")
+                elif self.source_side == "output": # draw line
+                    self.draw_line(self.source_label, label)
+                    self.source_label.setStyleSheet(f"background-color: {button_color}; border: 1px solid black;")
+                    self.source_label = None  # Reset the selection
+                    self.source_side = None
+            else: # nothing pressed before, mark source
+                self.source_label = label
+                self.source_label.setStyleSheet("background-color: green; border: 1px solid black;")
+                self.source_side = side
         else:
-            if side == "input" and label != self.source_label:
-                # Connect only if the second label's side is input and it's a different label
-                self.draw_line(self.source_label, label)
-                self.source_label.setStyleSheet(f"background-color: {button_color}; border: 1px solid black;")
-                self.source_label = None  # Reset the selection
-                self.source_side = None
+            print("pressed side is not defined: " + side)
+
 
     def updateUI(self):
         self.update()
@@ -99,14 +120,21 @@ class DropArea(QFrame):
         self.update()  # Trigger a repaint to draw the new line
 
     def paintEvent(self, event):
+        print('draw')
         super().paintEvent(event)
         painter = QPainter(self)
         pen = QPen(QColor(button_color), 3)
+        pen_active = QPen(QColor(active_wire_color), 3)
         painter.setPen(pen)
 
         # Draw all stored lines
         for wireId, wire in wireList.items():
-            painter.drawLine(wire.line)
+            if (wire.getState()):
+                painter.setPen(pen_active)
+                painter.drawLine(wire.line)
+            else:
+                painter.setPen(pen)
+                painter.drawLine(wire.line)
 
     # mouse press on the droparea, if it is near a wire and it was a right click, this wire gets deleted
     def mousePressEvent(self, event):

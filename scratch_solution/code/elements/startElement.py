@@ -11,7 +11,8 @@ from PyQt5.QtGui import QPainter, QPen
 from PyQt5.QtWidgets import QLabel, QMessageBox
 from PyQt5.QtCore import Qt, QPoint
 
-from ..helper.global_variables import button_color, wireList, startPoints
+from ..helper.functions import globalSimulationRun
+from ..helper.global_variables import button_color, wireList, startPoints, gateList
 
 
 class startElement(QLabel):
@@ -48,8 +49,15 @@ class startElement(QLabel):
         self.outWire.remove(wireId)
         if wireList[wireId]:
             wireList[wireId].removeInputGate(self.id)
+            # if start wire is deleted, set every state of gatter/wire to 0 and calculate again
+            for gateId in list(gateList.keys()):  # Create a list of the keys
+                gateList[gateId].setState(0)
+            globalSimulationRun()
 
-    # write a nice json format to store gatterobject in file
+
+
+
+                # write a nice json format to store gatterobject in file
     def to_dict(self):
         return {
             'id': self.id,

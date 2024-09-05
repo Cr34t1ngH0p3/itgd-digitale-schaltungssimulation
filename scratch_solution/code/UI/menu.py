@@ -70,18 +70,8 @@ class Menu(QFrame):
             with open(file_path, 'r') as config_file:
                 config_data = json.load(config_file)
 
-            # Clear the existing gateList
-            for gateId in list(gateList.keys()):  # Create a list of the keys
-                gate = gateList[gateId]
-                gate.deleteGatter()
+            self.delete_config()
 
-            for wireId in list(wireList.keys()):
-                wire = wireList[wireId]
-                wire.deleteWire()
-
-            gateList.clear()
-            wireList.clear()
-            self.dropArea.update()
             GatterButton.set_counter(config_data['gatter_id'])
             Wire.set_counter(config_data['wire_id'])
 
@@ -104,6 +94,32 @@ class Menu(QFrame):
         for id, startPoint in startPoints.items():
             for wireId in startPoint.outWire:
                 wireList[wireId].setState(id)
+
+    def delete_config(self):
+        if (len(wireList) != 0 or len(gateList) != 0):
+            # ask user if he want to load config and overwrite existing elements
+            reply = QMessageBox.question(self, 'Delete configuration',
+                                 "Are you sure you want to delete the actual config?",
+                                 QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
+
+            # Handle the user's response
+            if reply == QMessageBox.Yes:
+                # Clear the existing gateList
+                for gateId in list(gateList.keys()):  # Create a list of the keys
+                    gate = gateList[gateId]
+                    gate.deleteGatter()
+
+                for wireId in list(wireList.keys()):
+                    wire = wireList[wireId]
+                    wire.deleteWire()
+
+                gateList.clear()
+                wireList.clear()
+                self.dropArea.update()
+                GatterButton.set_counter(0)
+                Wire.set_counter(0)
+            else:
+                print("Deletion canceled.")
 
 
     def __init__(self, parent, drop_area):
@@ -175,8 +191,39 @@ class Menu(QFrame):
             }}
         """)
 
+
+    # Out of usage because simulation is running all the time
+        '''
         runConfigButton = QPushButton("Run simulation", self)
         runConfigButton.clicked.connect(self.runSimulation)  # Connect to load_config function
+        main_layout.addWidget(runConfigButton)
+        Set custom style using setStyleSheet
+        runConfigButton.setStyleSheet(f"""
+            QPushButton {{
+                background-color: {button_color}; /* white */
+                color: black;
+                border: none;
+                padding: 3px 5px;
+                text-align: center;
+                text-decoration: none;
+                display: inline-block;
+                margin: 3px;
+                cursor: pointer;
+                border-radius: 5px;
+                height: 20px;
+                width: 100px;
+            }}
+            QPushButton:hover {{
+                background-color: #45a049; /* Darker green */
+            }}
+            QPushButton:pressed {{
+                background-color: #3e8e41; /* Even darker green */
+            }}
+        """)
+'''
+
+        runConfigButton = QPushButton("Delete config", self)
+        runConfigButton.clicked.connect(self.delete_config)  # Connect to load_config function
         main_layout.addWidget(runConfigButton)
         # Set custom style using setStyleSheet
         runConfigButton.setStyleSheet(f"""
