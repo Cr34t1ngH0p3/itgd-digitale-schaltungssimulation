@@ -7,9 +7,10 @@
 
 import json
 
-from PyQt5.QtCore import QPoint
-from PyQt5.QtWidgets import QFrame, QPushButton, QHBoxLayout, QMessageBox, QFileDialog
-
+from PyQt5.QtWidgets import QFrame, QPushButton, QHBoxLayout, QMessageBox, QFileDialog, QToolTip
+from PyQt5.QtCore import Qt
+from PyQt5.QtGui import *
+from PyQt5.QtWidgets import *
 from .drag_and_drop import DropArea
 from ..elements.startElement import startElement
 from ..helper.functions import globalSimulationRun
@@ -248,6 +249,34 @@ class Menu(QFrame):
                 background-color: #3e8e41; /* Even darker green */
             }}
         """)
+
+        info_button = QPushButton("i", self)
+    # TODO tooltip doe snot appear
+        info_button.setToolTip("Pull gatter from the menu box into the drop area to add them. \n Right click on two an existing gatter to create a wire. If you click on the left half it will be the input gatter-point of the wire. Click on the right half of the other gatter to set it as endpoint. \n Right clikc on a wire to delete it. \n Use middle mouse button to delete a gatter with all its wires.")
+        info_button.setFocusPolicy(Qt.NoFocus)  # Allows tooltip on hover even when button is not focused
+        info_button.setStyleSheet(f"""
+            QPushButton {{
+                background-color: {button_color}; /* white */
+                color: black;
+                border: none;
+                padding: 3px 5px;
+                text-align: center;
+                text-decoration: none;
+                display: inline-block;
+                margin: 3px;
+                cursor: pointer;
+                border-radius: 5px;
+                height: 20px;
+                width: 20;
+            }}
+            QPushButton:hover {{
+                background-color: #45a049; /* Darker green */
+            }}
+            QPushButton:pressed {{
+                background-color: #3e8e41; /* Even darker green */
+            }}
+        """)
+        main_layout.addWidget(info_button)
 
         # Set layout for the widget
         self.setLayout(main_layout)
