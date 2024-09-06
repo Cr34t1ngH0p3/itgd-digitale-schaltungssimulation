@@ -63,7 +63,6 @@ class Wire(QWidget):
         return self.state
 
     def setState(self, state, force=False):
-        print('change wire state', self.id, state, self, force)
         if self.state != state or force:
             self.state = state
             for gatterId in self.endpointGateList:

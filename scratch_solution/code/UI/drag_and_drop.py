@@ -155,7 +155,7 @@ class DropArea(QFrame):
         elif gatter_data['name'] == '-':
             gatter = NotButton(parent=self, name=gatter_data['name'], inList=gatter_data['inputWireList'], outList=gatter_data['outWire'], is_in_drop_area=False, gatter_id=gatter_data['id'])
         gatter.is_in_drop_area = True
-        print('create button after loading: ', gatter_data['position_x'], gatter_data['position_y'])
+        print('create button after loading: ', gatter_data["id"], gatter_data['position_x'], gatter_data['position_y'])
         gatter.move(QPoint(gatter_data['position_x'], gatter_data['position_y']))
         gateList[gatter.id] = gatter
         gatter.show()
