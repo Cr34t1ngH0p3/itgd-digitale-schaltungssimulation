@@ -77,7 +77,6 @@ class GatterButton(QLabel):
             except Exception as e: # catch exception and dont throw error because this happens if old configs are load. there gatter with lists of all future wires are created, but the wire does not exist yet...TODO fix this problem in a pretty way
                 print('Error while updating gatter state: ', e)
 
-
     # tell gatter that the wire is connected
     # tell the wire that its endpoint is connected to this input
     def addInputWire(self, wireId):
@@ -86,7 +85,6 @@ class GatterButton(QLabel):
         if wireList[wireId]:
             wireList[wireId].addOutputGate(self.id)
         self.updateState()
-
 
     # delete the wire from self-inputlist and tell wire it got disconnected
     def deleteInputWire(self, wireId):

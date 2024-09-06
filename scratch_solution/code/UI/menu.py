@@ -95,7 +95,6 @@ class Menu(QFrame):
 
 
     # run simulation by "updating" every wire that is connected to one of the startpoints, this should trigger the update function of all connected gatter and so on
-    # TODO 1.check for circle, 2.run again if something changes, 3.maybe do continues updates (like a ticke rate)
     def runSimulation(self):
         for id, startPoint in startPoints.items():
             for wireId in startPoint.outWire:
@@ -266,7 +265,7 @@ class Menu(QFrame):
 
         info_button = QPushButton("i", self)
         info_button.clicked.connect(self.show_info)
-    # TODO tooltip doe snot appear
+    # TODO tooltip doe snot appear on linux
         info_button.setToolTip("Pull gatter from the menu box into the drop area to add them. \n Right click on two an existing gatter to create a wire. If you click on the left half it will be the input gatter-point of the wire. Click on the right half of the other gatter to set it as endpoint. \n Right clikc on a wire to delete it. \n Use middle mouse button to delete a gatter with all its wires.")
         info_button.setFocusPolicy(Qt.NoFocus)  # Allows tooltip on hover even when button is not focused
         info_button.setStyleSheet(f"""
