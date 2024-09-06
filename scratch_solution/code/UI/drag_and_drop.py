@@ -170,7 +170,7 @@ class DropArea(QFrame):
         gateList[wire_data['endpointGates'][0]].addInputWire(wire.id) # right now there are just one gatter per endpoint, see #TODO in wireclass
         self.update()
 
-    def addStartButton(self, state, position_x, position_y):
-        startPoint = startElement(self, state, [])
+    def addStartButton(self, state, type, position_x, position_y):
+        startPoint = startElement(self, state, type, [])
         startPoint.move(QPoint(position_x, position_y))
         startPoint.show()

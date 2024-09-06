@@ -64,10 +64,8 @@ class Wire(QWidget):
     def setState(self, state, force=False):
         print(self.id, state, self, force)
         if self.state != state or force:
-          #  time.sleep(1)
             self.state = state
             for gatterId in self.endpointGateList:
-
                 gateList[gatterId].updateState()
 
     def addOutputGate(self, gateId):

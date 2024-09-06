@@ -54,8 +54,9 @@ class MainWindow(QMainWindow):
 
     # there should only exist one with ON and one with OFF
     def createStartPoints(self, drop_area):
-        drop_area.addStartButton(0, 0, 200)
-        drop_area.addStartButton(1, 0, 150)
+        drop_area.addStartButton(1, 'ON', 0, 200)
+        drop_area.addStartButton(0, 'OFF', 0, 150)
+        drop_area.addStartButton(0, 'CLOCK', 0, 100)
 
     def createGatterButton(self, main_layout):
         # Create a horizontal layout

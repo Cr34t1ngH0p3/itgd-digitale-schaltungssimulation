@@ -16,5 +16,6 @@ Project to simulate digital circuits with:
 - Abspeichern/Einlesen der Konfiguration als Objektliste
 - C++ oder Python
 - toggle on / off buttons to On / on and so on...
-- todo let states active if source get deleted
 - clock input
+
+
