@@ -127,7 +127,7 @@ class Menu(QFrame):
         msg = QMessageBox()
         msg.setIcon(QMessageBox.Information)
         msg.setWindowTitle("Program Info")
-        msg.setText(" -   Pull gatter from the menu box into the drop area to add them. \n -   Right click on two an existing gatter to create a wire. If you click on the left half it will be the input gatter-point of the wire. Click on the right half of the other gatter to set it as endpoint. \n -   Right clikc on a wire to delete it. \n -   Use middle mouse button to delete a gatter with all its wires.")
+        msg.setText(" <b>Gatter:</b> <br> -   Pull gatter from the menu box into the drop area to add them. <br> -   Use middle mouse button to delete a gatter with all its wires. <br><b> Wire: </b> <br> -   Right click on two an existing gatter to create a wire. If you click on the left half it will be the input gatter-point of the wire. Click on the right half of the other gatter to set it as endpoint. <br>  -   Right click on a wire to delete it.<br> <b>Startpoints: </b> <br>-   Change type if startpoint by leftclick. The change order is: OFF - ON - CLOCK")
         msg.setStandardButtons(QMessageBox.Ok)
         msg.exec_()
 
