@@ -12,7 +12,7 @@ from PyQt5.QtWidgets import QLabel, QMessageBox
 from PyQt5.QtCore import Qt, QPoint
 
 from ..helper.functions import globalSimulationRun
-from ..helper.global_variables import button_color, wireList, startPoints, gateList
+from ..helper.global_variables import gatter_color, wireList, startPoints, gateList
 
 
 class startElement(QLabel):
@@ -32,7 +32,7 @@ class startElement(QLabel):
         self.setText('ON' if state else 'OFF')
         # dictonary with {wireId: wireElement, ....}
         self.setFixedSize(40, 30)
-        self.setStyleSheet(f"background-color: {button_color}; border: 1px solid black;")
+        self.setStyleSheet(f"background-color: {gatter_color}; border: 1px solid black;")
         self.start_pos = QPoint(0, 0)
         startPoints[self.id] = self
 

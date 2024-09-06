@@ -14,7 +14,7 @@ from ..elements.gatter.not_gatter import NotButton
 from ..elements.gatter.or_gatter import OrButton
 from ..elements.gatter.parent_gatter import GatterButton
 from ..elements.startElement import startElement
-from ..helper.global_variables import wireList, gateList, button_color, background_color, startPoints, active_wire_color
+from ..helper.global_variables import wireList, gateList, gatter_color, background_color, startPoints, active_wire_color
 from ..helper.functions import is_point_on_line
 from ..elements.wire import Wire
 from ..helper.functions import globalSimulationRun
@@ -68,12 +68,12 @@ class DropArea(QFrame):
         if side == "output":
             if self.source_label != None: # input side got pressed before -> draw line
                 if self.source_side == "output" or self.source_label == label: # got pressed before -> overwrite source
-                    self.source_label.setStyleSheet(f"background-color: {button_color}; border: 1px solid black;") # set color back of old pressed gatter
+                    self.source_label.setStyleSheet(f"background-color: {gatter_color}; border: 1px solid black;") # set color back of old pressed gatter
                     self.source_label = label
                     self.source_label.setStyleSheet("background-color: yellow; border: 1px solid black;")
                 elif self.source_side == "input": # draw line
                     self.draw_line(label, self.source_label)
-                    self.source_label.setStyleSheet(f"background-color: {button_color}; border: 1px solid black;")
+                    self.source_label.setStyleSheet(f"background-color: {gatter_color}; border: 1px solid black;")
                     self.source_label = None  # Reset the selection
                     self.source_side = None
             else: # nothing pressed before, mark source
@@ -83,12 +83,12 @@ class DropArea(QFrame):
         elif side == "input":
             if self.source_label != None: # input side got pressed before -> draw line
                 if self.source_side == "input" or self.source_label == label: # got pressed before -> overwrite source
-                    self.source_label.setStyleSheet(f"background-color: {button_color}; border: 1px solid black;") # set color back of old pressed gatter
+                    self.source_label.setStyleSheet(f"background-color: {gatter_color}; border: 1px solid black;") # set color back of old pressed gatter
                     self.source_label = label
                     self.source_label.setStyleSheet("background-color: green; border: 1px solid black;")
                 elif self.source_side == "output": # draw line
                     self.draw_line(self.source_label, label)
-                    self.source_label.setStyleSheet(f"background-color: {button_color}; border: 1px solid black;")
+                    self.source_label.setStyleSheet(f"background-color: {gatter_color}; border: 1px solid black;")
                     self.source_label = None  # Reset the selection
                     self.source_side = None
             else: # nothing pressed before, mark source
@@ -120,10 +120,10 @@ class DropArea(QFrame):
         self.update()  # Trigger a repaint to draw the new line
 
     def paintEvent(self, event):
-        print('draw')
+        print('draw lines')
         super().paintEvent(event)
         painter = QPainter(self)
-        pen = QPen(QColor(button_color), 3)
+        pen = QPen(QColor(gatter_color), 3)
         pen_active = QPen(QColor(active_wire_color), 3)
         painter.setPen(pen)
 

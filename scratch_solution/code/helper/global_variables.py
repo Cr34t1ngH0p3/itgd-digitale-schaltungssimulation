@@ -6,7 +6,9 @@ wireList = {}
 gateList = {}
 startPoints = {}
 
-button_color='white'
+gatter_color='#FFFFFF'
+end_gatter_color='#cccccc'
+gatter_change_state_color='red'
 active_wire_color='orange'
 background_color='black'
 

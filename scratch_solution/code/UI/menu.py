@@ -14,7 +14,7 @@ from PyQt5.QtWidgets import *
 from .drag_and_drop import DropArea
 from ..elements.startElement import startElement
 from ..helper.functions import globalSimulationRun
-from ..helper.global_variables import wireList, gateList, background_color, button_color, startPoints
+from ..helper.global_variables import wireList, gateList, background_color, gatter_color, startPoints
 from ..elements.gatter.parent_gatter import GatterButton
 from ..elements.wire import Wire
 #from ..elements.gatter.parent_gatter import GatterButton
@@ -45,7 +45,7 @@ class Menu(QFrame):
         except Exception as e:
             QMessageBox.critical(self, "Error", f"Failed to store config: {e}")
 
-# TODO check if ids are correct, specially if there were gatters before
+    # TODO check if ids are correct, specially if there were gatters before
     def get_config_file(self):
         if (len(wireList) != 0 or len(gateList) != 0):
             # ask user if he want to load config and overwrite existing elements
@@ -122,6 +122,15 @@ class Menu(QFrame):
             else:
                 print("Deletion canceled.")
 
+    def show_info(self):
+        # Display a QMessageBox with information
+        msg = QMessageBox()
+        msg.setIcon(QMessageBox.Information)
+        msg.setWindowTitle("Program Info")
+        msg.setText(" -   Pull gatter from the menu box into the drop area to add them. \n -   Right click on two an existing gatter to create a wire. If you click on the left half it will be the input gatter-point of the wire. Click on the right half of the other gatter to set it as endpoint. \n -   Right clikc on a wire to delete it. \n -   Use middle mouse button to delete a gatter with all its wires.")
+        msg.setStandardButtons(QMessageBox.Ok)
+        msg.exec_()
+
 
     def __init__(self, parent, drop_area):
         super().__init__(parent)
@@ -144,7 +153,7 @@ class Menu(QFrame):
         # Set custom style using setStyleSheet
         storeConfigButton.setStyleSheet(f"""
             QPushButton {{
-                background-color: {button_color}; /* white */
+                background-color: {gatter_color}; /* white */
                 color: black;
                 border: none;
                 padding: 3px 5px;
@@ -171,7 +180,7 @@ class Menu(QFrame):
         # Set custom style using setStyleSheet
         loadConfigButton.setStyleSheet(f"""
             QPushButton {{
-                background-color: {button_color}; /* white */
+                background-color: {gatter_color}; /* white */
                 color: black;
                 border: none;
                 padding: 3px 5px;
@@ -201,7 +210,7 @@ class Menu(QFrame):
         Set custom style using setStyleSheet
         runConfigButton.setStyleSheet(f"""
             QPushButton {{
-                background-color: {button_color}; /* white */
+                background-color: {gatter_color}; /* white */
                 color: black;
                 border: none;
                 padding: 3px 5px;
@@ -229,7 +238,7 @@ class Menu(QFrame):
         # Set custom style using setStyleSheet
         runConfigButton.setStyleSheet(f"""
             QPushButton {{
-                background-color: {button_color}; /* white */
+                background-color: {gatter_color}; /* white */
                 color: black;
                 border: none;
                 padding: 3px 5px;
@@ -251,12 +260,13 @@ class Menu(QFrame):
         """)
 
         info_button = QPushButton("i", self)
+        info_button.clicked.connect(self.show_info)
     # TODO tooltip doe snot appear
         info_button.setToolTip("Pull gatter from the menu box into the drop area to add them. \n Right click on two an existing gatter to create a wire. If you click on the left half it will be the input gatter-point of the wire. Click on the right half of the other gatter to set it as endpoint. \n Right clikc on a wire to delete it. \n Use middle mouse button to delete a gatter with all its wires.")
         info_button.setFocusPolicy(Qt.NoFocus)  # Allows tooltip on hover even when button is not focused
         info_button.setStyleSheet(f"""
             QPushButton {{
-                background-color: {button_color}; /* white */
+                background-color: {gatter_color}; /* white */
                 color: black;
                 border: none;
                 padding: 3px 5px;

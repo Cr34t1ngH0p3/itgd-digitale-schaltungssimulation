@@ -13,7 +13,10 @@ class NotButton(GatterButton):
         #Yeah, I understand, that there is only one input value here and it is possible to make it easier, but anyway :)
         sum = 0
         for wireId in self.inputWireList:
-            sum = sum + wireList[wireId].getState()
+            try:
+                sum = sum + wireList[wireId].getState()
+            except Exception as e: # catch exception and dont throw error because this happens if old configs are load. there gatter with lists of all future wires are created, but the wire does not exist yet...TODO fix this problem in a pretty way
+                print('Error while updating gatter state: ', e)
         if sum > 0:
             self.outputValue = 0
         else:

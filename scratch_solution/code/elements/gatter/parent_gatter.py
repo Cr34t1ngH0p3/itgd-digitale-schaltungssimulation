@@ -13,8 +13,9 @@
 from PyQt5.QtWidgets import QLabel
 from PyQt5.QtCore import Qt, QMimeData, QPoint, QRect, pyqtSignal
 from PyQt5.QtGui import QDrag, QPixmap, QPainter, QPen
+import time
 
-from ...helper.global_variables import wireList, gateList, button_color
+from ...helper.global_variables import wireList, gateList, gatter_color, end_gatter_color, gatter_change_state_color
 from ...helper.functions import globalSimulationRun
 
 # Draggable widget with input and output sides
@@ -44,13 +45,17 @@ class GatterButton(QLabel):
         self.inputWireList = input_wires
         self.outWire = output_wire # dictonary with {wireId: wireElement, ....}
         self.setFixedSize(100, 50)
-        self.setStyleSheet(f"background-color: {button_color}; border: 1px solid black;")
+        self.setStyleSheet(f"background-color: {gatter_color}; border: 1px solid black;")
         self.start_pos = QPoint(0, 0)
         # self.start_pos = QPoint(position_x, position_y) # set it always to 0,0
         self.is_in_drop_area = is_in_drop_area
         self.outputValue = 0
         if self.is_in_drop_area:
             gateList[self.id] = self
+
+        self.background_color = gatter_color
+        if len(self.outWire) == 0 and is_in_drop_area:
+            self.set_background_color(end_gatter_color)
 
     # get actual state
     def getState(self):
@@ -62,8 +67,15 @@ class GatterButton(QLabel):
         self.informWireAboutState()
 
     def informWireAboutState(self):
+      #  self.setStyleSheet(f"background-color: {gatter_change_state_color}; border: 1px solid black;")
+      #  time.sleep(1)
+      #  self.setStyleSheet(f"background-color: {self.background_color}; border: 1px solid black;")
         for wireId in self.outWire:
-            wireList[wireId].setState(self.outputValue)
+            try:
+                wireList[wireId].setState(self.outputValue)
+            except Exception as e: # catch exception and dont throw error because this happens if old configs are load. there gatter with lists of all future wires are created, but the wire does not exist yet...TODO fix this problem in a pretty way
+                print('Error while updating gatter state: ', e)
+
 
     # tell gatter that the wire is connected
     # tell the wire that its endpoint is connected to this input
@@ -87,11 +99,15 @@ class GatterButton(QLabel):
             self.outWire.append(wireId)
         if wireList[wireId]:
             wireList[wireId].addInputGate(self.id)
+        if len(self.outWire) == 0:
+            self.set_background_color(gatter_color)
 
     def deleteOutputWire(self, wireId):
         self.outWire.remove(wireId)
         if wireList[wireId]:
             wireList[wireId].removeInputGate(self.id)
+        if len(self.outWire) == 0:
+            self.set_background_color(gatter_color)
 
     def inputClickEventHandler(self):
         self.inputClickEvent.emit()
@@ -223,8 +239,13 @@ class GatterButton(QLabel):
 
         del self
 
+    def set_background_color(self, color):
+        # Store the color and update the stylesheet
+        self.background_color = color
+        self.setStyleSheet(f"background-color: {self.background_color}; border: 1px solid black;")
 
-        #globalSimulationRun()
+
+    #globalSimulationRun()
 
 
 

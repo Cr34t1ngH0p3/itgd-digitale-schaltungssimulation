@@ -8,7 +8,7 @@
 
 
 from PyQt5.QtWidgets import QMainWindow, QVBoxLayout, QWidget, QPushButton, QHBoxLayout
-from PyQt5.QtCore import QTimer
+from PyQt5.QtCore import QTimer, Qt
 
 from ..UI.drag_and_drop import DropArea
 from ..UI.menu import Menu
@@ -22,7 +22,7 @@ from ..helper.functions import globalSimulationRun
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
-        self.setWindowTitle("Drag and Drop Example with Inputs and Outputs")
+        self.setWindowTitle("Schaltkreissimulation")
         self.setGeometry(100, 100, 500, 500)
 
         #Tic creation
@@ -70,6 +70,12 @@ class MainWindow(QMainWindow):
         button_layout.addWidget(self.and_button)
         button_layout.addWidget(self.or_button)
         button_layout.addWidget(self.nor_button)
+
+        # Set spacing between the buttons (padding)
+        button_layout.setSpacing(50)  # 10 pixels of space between buttons
+
+        # Align the buttons to the right
+        button_layout.setAlignment(Qt.AlignLeft)
 
         # Add the horizontal layout to the main layout
         main_layout.addLayout(button_layout)
