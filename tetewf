@@ -1,9 +1,0 @@
-1.
-
-
-gater gets updated -> loop over list of wires -> tell each wire to change state
-
-
-2.
-
-gater gets update -> tell wire to change state -> wire loop over every outputgater

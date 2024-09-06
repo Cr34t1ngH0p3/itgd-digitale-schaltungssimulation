@@ -15,7 +15,7 @@ from PyQt5.QtWidgets import QLabel, QMessageBox
 from PyQt5.QtCore import Qt, QPoint
 
 from ..helper.functions import globalSimulationRun
-from ..helper.global_variables import gatter_color, wireList, startPoints, gateList
+from ..helper.global_variables import gatter_color, wireList, startPoints, gateList, clock_timeout
 
 
 class startElement(QLabel):
@@ -36,7 +36,7 @@ class startElement(QLabel):
         self.setText(type)
         self.type = type
         # dictonary with {wireId: wireElement, ....}
-        self.setFixedSize(40, 30)
+        self.setFixedSize(60, 30)
         self.setStyleSheet(f"background-color: {gatter_color}; border: 1px solid black;")
         self.start_pos = QPoint(0, 0)
         startPoints[self.id] = self
@@ -118,13 +118,16 @@ class startElement(QLabel):
         clock_thread.start()
 
     def stopClock(self):
-        print('something')
+        print('stop clock')
 
     def runClock(self):
-        if(self.type == 'CLOCK'):
-            self.state = not(self.state)
-            time.sleep(1)
-            for wireId in self.outWire:
-                wireList[wireId].setState(self.state)
-            self.parent().updateUI()
-            self.runClock()
+        try:
+            if(self.type == 'CLOCK'):
+                self.state = not(self.state)
+                time.sleep(clock_timeout)
+                for wireId in self.outWire:
+                    wireList[wireId].setState(self.state)
+                self.parent().updateUI()
+                self.runClock()
+        except Exception as e:
+            print('error in clock loop: ', e)
