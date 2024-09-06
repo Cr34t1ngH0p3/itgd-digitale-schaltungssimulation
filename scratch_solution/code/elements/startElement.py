@@ -107,8 +107,8 @@ class startElement(QLabel):
             self.state = 0
             self.startClock()
         self.setText(self.type)
-       # for wireId in self.outWire:
-         #   wireList[wireId].setState(self.state)
+        for wireId in self.outWire:
+            wireList[wireId].setState(self.state)
         self.parent().updateUI()
 
     def startClock(self):

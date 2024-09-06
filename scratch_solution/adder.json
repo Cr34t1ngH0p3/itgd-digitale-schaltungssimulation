@@ -1,0 +1,285 @@
+{
+    "gatter": [
+        {
+            "gatterId": 4,
+            "gatter": {
+                "id": 4,
+                "name": "|",
+                "inputWireList": [
+                    1,
+                    2
+                ],
+                "outWire": [
+                    5
+                ],
+                "position_x": 152,
+                "position_y": 131
+            }
+        },
+        {
+            "gatterId": 5,
+            "gatter": {
+                "id": 5,
+                "name": "&",
+                "inputWireList": [
+                    3,
+                    4
+                ],
+                "outWire": [
+                    6
+                ],
+                "position_x": 157,
+                "position_y": 218
+            }
+        },
+        {
+            "gatterId": 6,
+            "gatter": {
+                "id": 6,
+                "name": "&",
+                "inputWireList": [
+                    5,
+                    7
+                ],
+                "outWire": [],
+                "position_x": 458,
+                "position_y": 137
+            }
+        },
+        {
+            "gatterId": 7,
+            "gatter": {
+                "id": 7,
+                "name": "-",
+                "inputWireList": [
+                    6
+                ],
+                "outWire": [
+                    7
+                ],
+                "position_x": 310,
+                "position_y": 215
+            }
+        },
+        {
+            "gatterId": 8,
+            "gatter": {
+                "id": 8,
+                "name": "&",
+                "inputWireList": [
+                    8,
+                    9
+                ],
+                "outWire": [],
+                "position_x": 168,
+                "position_y": 367
+            }
+        }
+    ],
+    "wire": [
+        {
+            "wireId": 1,
+            "wire": {
+                "id": 1,
+                "state": 1,
+                "endpointGates": [
+                    4
+                ],
+                "startpointGates": [],
+                "startPoint_x": 60,
+                "startPoint_y": 164,
+                "endPoint_x": 152,
+                "endPoint_y": 156,
+                "connectedToStartPoint": true,
+                "startPoint": 2
+            }
+        },
+        {
+            "wireId": 2,
+            "wire": {
+                "id": 2,
+                "state": 1,
+                "endpointGates": [
+                    4
+                ],
+                "startpointGates": [],
+                "startPoint_x": 60,
+                "startPoint_y": 214,
+                "endPoint_x": 152,
+                "endPoint_y": 156,
+                "connectedToStartPoint": true,
+                "startPoint": 1
+            }
+        },
+        {
+            "wireId": 3,
+            "wire": {
+                "id": 3,
+                "state": 1,
+                "endpointGates": [
+                    5
+                ],
+                "startpointGates": [],
+                "startPoint_x": 60,
+                "startPoint_y": 164,
+                "endPoint_x": 157,
+                "endPoint_y": 243,
+                "connectedToStartPoint": true,
+                "startPoint": 2
+            }
+        },
+        {
+            "wireId": 4,
+            "wire": {
+                "id": 4,
+                "state": 1,
+                "endpointGates": [
+                    5
+                ],
+                "startpointGates": [],
+                "startPoint_x": 60,
+                "startPoint_y": 214,
+                "endPoint_x": 157,
+                "endPoint_y": 243,
+                "connectedToStartPoint": true,
+                "startPoint": 1
+            }
+        },
+        {
+            "wireId": 5,
+            "wire": {
+                "id": 5,
+                "state": 1,
+                "endpointGates": [
+                    6
+                ],
+                "startpointGates": [
+                    4
+                ],
+                "startPoint_x": 252,
+                "startPoint_y": 156,
+                "endPoint_x": 458,
+                "endPoint_y": 161,
+                "connectedToStartPoint": false,
+                "startPoint": 0
+            }
+        },
+        {
+            "wireId": 6,
+            "wire": {
+                "id": 6,
+                "state": 1,
+                "endpointGates": [
+                    7
+                ],
+                "startpointGates": [
+                    5
+                ],
+                "startPoint_x": 257,
+                "startPoint_y": 243,
+                "endPoint_x": 310,
+                "endPoint_y": 239,
+                "connectedToStartPoint": false,
+                "startPoint": 0
+            }
+        },
+        {
+            "wireId": 7,
+            "wire": {
+                "id": 7,
+                "state": 0,
+                "endpointGates": [
+                    6
+                ],
+                "startpointGates": [
+                    7
+                ],
+                "startPoint_x": 410,
+                "startPoint_y": 239,
+                "endPoint_x": 458,
+                "endPoint_y": 161,
+                "connectedToStartPoint": false,
+                "startPoint": 0
+            }
+        },
+        {
+            "wireId": 8,
+            "wire": {
+                "id": 8,
+                "state": 1,
+                "endpointGates": [
+                    8
+                ],
+                "startpointGates": [],
+                "startPoint_x": 60,
+                "startPoint_y": 164,
+                "endPoint_x": 168,
+                "endPoint_y": 392,
+                "connectedToStartPoint": true,
+                "startPoint": 2
+            }
+        },
+        {
+            "wireId": 9,
+            "wire": {
+                "id": 9,
+                "state": 1,
+                "endpointGates": [
+                    8
+                ],
+                "startpointGates": [],
+                "startPoint_x": 60,
+                "startPoint_y": 214,
+                "endPoint_x": 168,
+                "endPoint_y": 392,
+                "connectedToStartPoint": true,
+                "startPoint": 1
+            }
+        }
+    ],
+    "wire_id": 9,
+    "gatter_id": 8,
+    "startElement": [
+        {
+            "eleId": 1,
+            "ele": {
+                "id": 1,
+                "state": 1,
+                "type": "ON",
+                "outWire": [
+                    2,
+                    4,
+                    9
+                ],
+                "position_x": 0,
+                "position_y": 200
+            }
+        },
+        {
+            "eleId": 2,
+            "ele": {
+                "id": 2,
+                "state": 1,
+                "type": "ON",
+                "outWire": [
+                    1,
+                    3,
+                    8
+                ],
+                "position_x": 0,
+                "position_y": 150
+            }
+        },
+        {
+            "eleId": 3,
+            "ele": {
+                "id": 3,
+                "state": true,
+                "type": "CLOCK",
+                "outWire": [],
+                "position_x": 0,
+                "position_y": 100
+            }
+        }
+    ]
+}
