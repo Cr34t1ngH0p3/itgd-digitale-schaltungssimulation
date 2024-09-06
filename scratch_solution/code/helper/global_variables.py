@@ -12,6 +12,9 @@ gatter_change_state_color='red'
 active_wire_color='orange'
 background_color='black'
 
+droparea_width = 800
+droparea_height = 800
+
 #Tic zone
 isTic = False
 seconds = 2000 #tic period in ms

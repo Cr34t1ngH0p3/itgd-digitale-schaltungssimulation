@@ -8,13 +8,15 @@
 from PyQt5.QtWidgets import QFrame, QMessageBox
 from PyQt5.QtCore import Qt, QPoint
 from PyQt5.QtGui import QPainter, QPen, QColor
+from prompt_toolkit.shortcuts import button_dialog
 
 from ..elements.gatter.and_gatter import AndButton
 from ..elements.gatter.not_gatter import NotButton
 from ..elements.gatter.or_gatter import OrButton
 from ..elements.gatter.parent_gatter import GatterButton
 from ..elements.startElement import startElement
-from ..helper.global_variables import wireList, gateList, gatter_color, background_color, startPoints, active_wire_color
+from ..helper.global_variables import wireList, gateList, gatter_color, background_color, startPoints, \
+    active_wire_color, droparea_width, droparea_height
 from ..helper.functions import is_point_on_line
 from ..elements.wire import Wire
 from ..helper.functions import globalSimulationRun
@@ -26,7 +28,7 @@ class DropArea(QFrame):
         self.setFrameStyle(QFrame.Sunken | QFrame.StyledPanel)
         self.setAcceptDrops(True)
         self.setStyleSheet(f"background-color: {background_color};")
-        self.setFixedSize(400, 400)
+        self.setFixedSize(droparea_width, droparea_height)
         self.source_label = None  # Track the first selected label (source)
         self.source_side = None  # Track whether the source is input or output
 
@@ -41,14 +43,14 @@ class DropArea(QFrame):
             if isinstance(source, GatterButton) and not source.is_in_drop_area:
                 # Create a new gatter in the drop area only if it's dragged from outside
                 if isinstance(source, AndButton):
-                    gatter = AndButton(parent=self, name="&", inList=[], outList=[], position_x=event.pos().x(), position_y=event.pos().y(), is_in_drop_area=True)
+                    gatter = AndButton(parent=self, name="&", inList=[], outList=[], start_pos=source.getStartPos(), is_in_drop_area=True)
                 elif isinstance(source, OrButton):
-                    gatter = OrButton(parent=self, name="|", inList=[], outList=[], position_x=event.pos().x(), position_y=event.pos().y(), is_in_drop_area=True)
+                    gatter = OrButton(parent=self, name="|", inList=[], outList=[], start_pos=source.getStartPos(), is_in_drop_area=True)
                 elif isinstance(source, NotButton):
-                    gatter = NotButton(parent=self, name="-", inList=[], outList=[], position_x=event.pos().x(), position_y=event.pos().y(), is_in_drop_area=True)
+                    gatter = NotButton(parent=self, name="-", inList=[], outList=[], start_pos=source.getStartPos(), is_in_drop_area=True)
                 else:
                     QMessageBox.critical(self, "Error", f"Source does not match any instance type.")
-                gatter.move(event.pos())
+                gatter.create_move(event.pos()) # event.pos is where my mouse is, left corner of gatter will appear there
                 gatter.is_in_drop_area = True
                 gatter.show() # display the new gatter
             elif isinstance(source, GatterButton) and source.is_in_drop_area:
@@ -120,7 +122,6 @@ class DropArea(QFrame):
         self.update()  # Trigger a repaint to draw the new line
 
     def paintEvent(self, event):
-        print('draw lines')
         super().paintEvent(event)
         painter = QPainter(self)
         pen = QPen(QColor(gatter_color), 3)
@@ -148,18 +149,20 @@ class DropArea(QFrame):
     def addGatterButton(self, gatter_data):
         gatter = None
         if gatter_data['name'] == '&':
-            gatter = AndButton(parent=self, name=gatter_data['name'], inList=gatter_data['inputWireList'], outList=gatter_data['outWire'], position_x=gatter_data['position_x'], position_y=gatter_data['position_y'], is_in_drop_area=False, gatter_id=gatter_data['id'])
+            gatter = AndButton(parent=self, name=gatter_data['name'], inList=gatter_data['inputWireList'], outList=gatter_data['outWire'], is_in_drop_area=False, gatter_id=gatter_data['id'])
         elif gatter_data['name'] == '|':
-            gatter = OrButton(parent=self, name=gatter_data['name'], inList=gatter_data['inputWireList'], outList=gatter_data['outWire'], position_x=gatter_data['position_x'], position_y=gatter_data['position_y'], is_in_drop_area=False, gatter_id=gatter_data['id'])
+            gatter = OrButton(parent=self, name=gatter_data['name'], inList=gatter_data['inputWireList'], outList=gatter_data['outWire'], is_in_drop_area=False, gatter_id=gatter_data['id'])
         elif gatter_data['name'] == '-':
-            gatter = NotButton(parent=self, name=gatter_data['name'], inList=gatter_data['inputWireList'], outList=gatter_data['outWire'], position_x=gatter_data['position_x'], position_y=gatter_data['position_y'], is_in_drop_area=False, gatter_id=gatter_data['id'])
+            gatter = NotButton(parent=self, name=gatter_data['name'], inList=gatter_data['inputWireList'], outList=gatter_data['outWire'], position_y=gatter_data['position_y'], is_in_drop_area=False, gatter_id=gatter_data['id'])
         gatter.is_in_drop_area = True
+        print('create button after loading: ', gatter_data['position_x'], gatter_data['position_y'])
         gatter.move(QPoint(gatter_data['position_x'], gatter_data['position_y']))
         gateList[gatter.id] = gatter
         gatter.show()
 
     # creates a gatterbutton and adds it to the UI
     def addWire(self, wire_data):
+        print(wire_data['state'])
         wire = Wire(self, QPoint(wire_data['startPoint_x'], wire_data['startPoint_y']), QPoint(wire_data['endPoint_x'],
                     wire_data['endPoint_y']), wire_data['state'], wire_data['endpointGates'], wire_data['startpointGates'], wire_data['connectedToStartPoint'], wire_data['startPoint'], wire_data['id'])
         wireList[wire.id] = wire

@@ -37,7 +37,8 @@ class Menu(QFrame):
         print("Config stored successfully!")
         config_gatter = [{'gatterId': id, 'gatter': gate.to_dict()} for id, gate in gateList.items()]
         config_wire = [{'wireId': id, 'wire': wire.to_dict()} for id, wire in wireList.items()]
-        config_data = {'gatter': config_gatter, 'wire': config_wire, 'wire_id': Wire.get_counter(), 'gatter_id': GatterButton.get_counter()} # store id counter to prevent id errors when loading config
+        config_start_element = [{'eleId': id, 'ele': ele.to_dict()} for id, ele in startPoints.items()]
+        config_data = {'gatter': config_gatter, 'wire': config_wire, 'wire_id': Wire.get_counter(), 'gatter_id': GatterButton.get_counter(), 'startElement': config_start_element} # store id counter to prevent id errors when loading config
         try:
             with open(file_path, 'w') as config_file:
                 json.dump(config_data, config_file, indent=4)
@@ -84,6 +85,10 @@ class Menu(QFrame):
                 wire_data = entry['wire']
                 self.dropArea.addWire(wire_data)
 
+            for entry in config_data['startElement']:
+                print(entry)
+                startPoints[entry['eleId']].changeType(entry['ele']['type'])
+
             globalSimulationRun()
 
             QMessageBox.information(self, "Load Config", f"Config loaded successfully from {file_path}!")
@@ -94,7 +99,7 @@ class Menu(QFrame):
     def runSimulation(self):
         for id, startPoint in startPoints.items():
             for wireId in startPoint.outWire:
-                wireList[wireId].setState(id)
+                wireList[wireId].setState(startPoint.getState())
 
     def delete_config(self):
         if (len(wireList) != 0 or len(gateList) != 0):

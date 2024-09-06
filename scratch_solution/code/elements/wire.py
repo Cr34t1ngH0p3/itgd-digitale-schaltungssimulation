@@ -42,6 +42,7 @@ class Wire(QWidget):
         else:
             Wire.counter += 1
             self.id = Wire.counter
+        print('create wire: ', wire_id, state)
         self.state = state
         self.endpointGateList = endpoint_gate_list
         self.startpointGateList = startpoint_gate_list
@@ -62,7 +63,7 @@ class Wire(QWidget):
         return self.state
 
     def setState(self, state, force=False):
-        print(self.id, state, self, force)
+        print('change wire state', self.id, state, self, force)
         if self.state != state or force:
             self.state = state
             for gatterId in self.endpointGateList:

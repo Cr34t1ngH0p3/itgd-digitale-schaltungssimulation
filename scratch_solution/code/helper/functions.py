@@ -61,4 +61,5 @@ def is_point_on_line(line, point, tolerance=10.0):
 def globalSimulationRun():
     for id, startPoint in startPoints.items():
         for wireId in startPoint.outWire:
-            wireList[wireId].setState(id, True)
+            print(startPoint)
+            wireList[wireId].setState(startPoint.getState(), True)

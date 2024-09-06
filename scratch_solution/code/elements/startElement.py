@@ -30,7 +30,7 @@ class startElement(QLabel):
         if startElement.counter > 3:
             QMessageBox.critical(self, "Error", f" To many startElements. Just two are allowed!")
 
-        self.id = state
+        self.id = startElement.counter
         self.state = state
         self.outWire = output_wire
         self.setText(type)
@@ -40,6 +40,8 @@ class startElement(QLabel):
         self.setStyleSheet(f"background-color: {gatter_color}; border: 1px solid black;")
         self.start_pos = QPoint(0, 0)
         startPoints[self.id] = self
+        print('startpoint id')
+        print(self.id)
         if self.type == 'CLOCK':
             self.startClock()
             print('clock started')
@@ -68,10 +70,12 @@ class startElement(QLabel):
         return {
             'id': self.id,
             'state': self.state,
+            'type': self.type,
             'outWire': self.outWire,
             'position_x': self.start_pos.x(),
             'position_y': self.start_pos.y(),
         }
+
     # if button pressed with right click there is the option to create a new wire to an other gatter
     def mousePressEvent(self, event):
         if event.button() == Qt.RightButton:
@@ -103,8 +107,8 @@ class startElement(QLabel):
             self.state = 0
             self.startClock()
         self.setText(self.type)
-        for wireId in self.outWire:
-            wireList[wireId].setState(self.state)
+       # for wireId in self.outWire:
+         #   wireList[wireId].setState(self.state)
         self.parent().updateUI()
 
     def startClock(self):
@@ -117,7 +121,6 @@ class startElement(QLabel):
         print('something')
 
     def runClock(self):
-        print('run clock', self.state)
         if(self.type == 'CLOCK'):
             self.state = not(self.state)
             time.sleep(1)

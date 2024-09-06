@@ -33,7 +33,7 @@ class GatterButton(QLabel):
         cls.counter = counter
 
     # TODO, use self.start_position when creating object, right now we need to use self.move after every creation
-    def __init__(self, parent, text, input_wires=[], output_wire=[], position_x=100, position_y=0, is_in_drop_area=False, gatter_id=None):
+    def __init__(self, parent, text, input_wires=[], output_wire=[], start_pos=QPoint(0,0), is_in_drop_area=False, gatter_id=None):
         super().__init__(text, parent)
         if gatter_id: # Usefull for laoding configfiles or implementing a "back" button for deleted elements
             # TODO check if wire with this id exist already in gatelist.
@@ -46,7 +46,8 @@ class GatterButton(QLabel):
         self.outWire = output_wire # dictonary with {wireId: wireElement, ....}
         self.setFixedSize(100, 50)
         self.setStyleSheet(f"background-color: {gatter_color}; border: 1px solid black;")
-        self.start_pos = QPoint(0, 0)
+        self.start_pos = start_pos
+        self.position_top_left_croner = QPoint(0, 0)
         # self.start_pos = QPoint(position_x, position_y) # set it always to 0,0
         self.is_in_drop_area = is_in_drop_area
         self.outputValue = 0
@@ -131,14 +132,15 @@ class GatterButton(QLabel):
             'name': self.name,
             'inputWireList': self.inputWireList,
             'outWire': self.outWire,
-            'position_x': self.start_pos.x(),
-            'position_y': self.start_pos.y(),
+            'position_x': self.position_top_left_croner.x(),
+            'position_y': self.position_top_left_croner.y(),
         }
 
     # if button pressed with right click there is the option to create a new wire to an other gatter
     def mousePressEvent(self, event):
         #from scratch_solution.UI.drag_and_drop import DropArea
         if event.button() == Qt.LeftButton:
+            print('new button: ', self.id, event.pos())
             self.start_pos = event.pos() # store start (acual position before move)
         elif event.button() == Qt.RightButton:
             # Determine if the click was on the input or output side
@@ -173,6 +175,13 @@ class GatterButton(QLabel):
 
     # move button for the distance between new position and old position
     def move(self, pos):
+        super().move(pos - self.start_pos)
+        self.position_top_left_croner = pos - self.start_pos
+        print('position_top_left_croner: ', self.position_top_left_croner)
+        self.start_pos = pos
+
+    def create_move(self, pos):
+        self.position_top_left_croner = pos
         super().move(pos - self.start_pos)
         self.start_pos = pos
 
@@ -244,6 +253,8 @@ class GatterButton(QLabel):
         self.background_color = color
         self.setStyleSheet(f"background-color: {self.background_color}; border: 1px solid black;")
 
+    def getStartPos(self):
+        return self.start_pos
 
     #globalSimulationRun()
 
