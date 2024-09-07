@@ -68,7 +68,7 @@ class DropArea(QFrame):
         print("label clicked")
         print(side)
         if side == "output":
-            if self.source_label != None: # input side got pressed before -> draw line
+            if self.source_label is not None: # input side got pressed before -> draw line
                 if self.source_side == "output" or self.source_label == label: # got pressed before -> overwrite source
                     self.source_label.setStyleSheet(f"background-color: {gatter_color}; border: 1px solid black;") # set color back of old pressed gatter
                     self.source_label = label
@@ -103,6 +103,11 @@ class DropArea(QFrame):
 
     def updateUI(self):
         self.update()
+
+    def checkIfGatterWasPressed(self, gatter):
+        if self.source_label is gatter:
+            self.source_label = None
+            self.source_side = None
 
     def draw_line(self, source, destination):
         # Calculate global positions

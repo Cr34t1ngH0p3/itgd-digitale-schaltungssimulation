@@ -93,7 +93,6 @@ class Menu(QFrame):
 
             QMessageBox.information(self, "Load Config", f"Config loaded successfully from {file_path}!")
 
-
     # run simulation by "updating" every wire that is connected to one of the startpoints, this should trigger the update function of all connected gatter and so on
     def runSimulation(self):
         for id, startPoint in startPoints.items():

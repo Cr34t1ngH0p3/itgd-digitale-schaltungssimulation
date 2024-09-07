@@ -21,7 +21,7 @@ class OrButton(GatterButton):
         else:
             self.outputValue = 0
 
-        self.informWireAboutState()
+        self.informWireAboutStateThread()
 
 
 #        for wireId in self.inputWireList:

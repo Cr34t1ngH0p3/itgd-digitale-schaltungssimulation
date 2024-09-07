@@ -66,6 +66,7 @@ class startElement(QLabel):
             # globalSimulationRun()
 
                 # write a nice json format to store gatterobject in file
+
     def to_dict(self):
         return {
             'id': self.id,

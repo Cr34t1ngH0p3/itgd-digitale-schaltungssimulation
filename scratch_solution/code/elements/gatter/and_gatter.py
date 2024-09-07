@@ -15,7 +15,7 @@ class AndButton(GatterButton):
             try:
                 if (wireList[wireId].getState() == 0):
                     self.outputValue = 0
-                    self.informWireAboutState()
+                    self.informWireAboutStateThread()
 
                     self.update()
                     return
@@ -23,6 +23,6 @@ class AndButton(GatterButton):
                 print('Error while updating gatter state: ', e)
 
         self.outputValue = 1
-        self.informWireAboutState()
+        self.informWireAboutStateThread()
 
         self.update()

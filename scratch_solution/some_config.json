@@ -30,7 +30,7 @@
                     5
                 ],
                 "position_x": 178,
-                "position_y": 91
+                "position_y": 100
             }
         },
         {
@@ -44,8 +44,8 @@
                 "outWire": [
                     8
                 ],
-                "position_x": 414,
-                "position_y": 67
+                "position_x": 415,
+                "position_y": 75
             }
         },
         {
@@ -60,8 +60,8 @@
                 "outWire": [
                     11
                 ],
-                "position_x": 361,
-                "position_y": 211
+                "position_x": 370,
+                "position_y": 208
             }
         },
         {
@@ -75,7 +75,7 @@
                 "outWire": [
                     10
                 ],
-                "position_x": 355,
+                "position_x": 351,
                 "position_y": 402
             }
         },
@@ -90,8 +90,8 @@
                 "outWire": [
                     9
                 ],
-                "position_x": 548,
-                "position_y": 57
+                "position_x": 563,
+                "position_y": 78
             }
         },
         {
@@ -154,7 +154,7 @@
                 "startPoint_x": 60,
                 "startPoint_y": 164,
                 "endPoint_x": 178,
-                "endPoint_y": 116,
+                "endPoint_y": 125,
                 "connectedToStartPoint": true,
                 "startPoint": 2
             }
@@ -171,9 +171,9 @@
                     5
                 ],
                 "startPoint_x": 278,
-                "startPoint_y": 115,
-                "endPoint_x": 343,
-                "endPoint_y": 53,
+                "startPoint_y": 125,
+                "endPoint_x": 415,
+                "endPoint_y": 100,
                 "connectedToStartPoint": false,
                 "startPoint": 0
             }
@@ -190,9 +190,9 @@
                     5
                 ],
                 "startPoint_x": 278,
-                "startPoint_y": 115,
-                "endPoint_x": 361,
-                "endPoint_y": 236,
+                "startPoint_y": 125,
+                "endPoint_x": 370,
+                "endPoint_y": 233,
                 "connectedToStartPoint": false,
                 "startPoint": 0
             }
@@ -210,8 +210,8 @@
                 ],
                 "startPoint_x": 268,
                 "startPoint_y": 302,
-                "endPoint_x": 361,
-                "endPoint_y": 236,
+                "endPoint_x": 370,
+                "endPoint_y": 233,
                 "connectedToStartPoint": false,
                 "startPoint": 0
             }
@@ -229,8 +229,8 @@
                 ],
                 "startPoint_x": 268,
                 "startPoint_y": 302,
-                "endPoint_x": 328,
-                "endPoint_y": 404,
+                "endPoint_x": 351,
+                "endPoint_y": 427,
                 "connectedToStartPoint": false,
                 "startPoint": 0
             }
@@ -246,10 +246,10 @@
                 "startpointGates": [
                     6
                 ],
-                "startPoint_x": 443,
-                "startPoint_y": 53,
-                "endPoint_x": 481,
-                "endPoint_y": 52,
+                "startPoint_x": 515,
+                "startPoint_y": 100,
+                "endPoint_x": 563,
+                "endPoint_y": 103,
                 "connectedToStartPoint": false,
                 "startPoint": 0
             }
@@ -265,8 +265,8 @@
                 "startpointGates": [
                     9
                 ],
-                "startPoint_x": 581,
-                "startPoint_y": 52,
+                "startPoint_x": 663,
+                "startPoint_y": 103,
                 "endPoint_x": 168,
                 "endPoint_y": 302,
                 "connectedToStartPoint": false,
@@ -284,8 +284,8 @@
                 "startpointGates": [
                     8
                 ],
-                "startPoint_x": 428,
-                "startPoint_y": 404,
+                "startPoint_x": 451,
+                "startPoint_y": 427,
                 "endPoint_x": 459,
                 "endPoint_y": 320,
                 "connectedToStartPoint": false,
@@ -303,8 +303,8 @@
                 "startpointGates": [
                     7
                 ],
-                "startPoint_x": 461,
-                "startPoint_y": 236,
+                "startPoint_x": 470,
+                "startPoint_y": 233,
                 "endPoint_x": 459,
                 "endPoint_y": 320,
                 "connectedToStartPoint": false,

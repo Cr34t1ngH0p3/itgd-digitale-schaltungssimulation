@@ -14,6 +14,8 @@ from PyQt5.QtWidgets import QLabel
 from PyQt5.QtCore import Qt, QMimeData, QPoint, QRect, pyqtSignal
 from PyQt5.QtGui import QDrag, QPixmap, QPainter, QPen
 import time
+import threading
+
 
 from ...helper.global_variables import wireList, gateList, gatter_color, end_gatter_color, gatter_change_state_color
 from ...helper.functions import globalSimulationRun
@@ -66,6 +68,15 @@ class GatterButton(QLabel):
     def setState(self, state):
         self.outputValue = state
         self.informWireAboutState()
+
+
+
+    def informWireAboutStateThread(self):
+        print('start clock')
+        clock_thread = threading.Thread(target=self.informWireAboutState)
+        clock_thread.daemon = True  # Ensures the thread will exit when the main program exits
+        clock_thread.start()
+
 
     def informWireAboutState(self):
       #  self.setStyleSheet(f"background-color: {gatter_change_state_color}; border: 1px solid black;")
@@ -241,6 +252,7 @@ class GatterButton(QLabel):
 
         gateList.pop(self.id)
         self.parent().updateUI()
+        self.parent().checkIfGatterWasPressed(self)
         self.hide()
 
         self.deleteLater()
