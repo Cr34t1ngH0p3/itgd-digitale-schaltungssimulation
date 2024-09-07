@@ -185,15 +185,7 @@ class GatterButton(QLabel):
     # move button for the distance between new position and old position
     def move(self, pos):
         super().move(pos - self.start_pos)
-        print(pos, self.start_pos)
         self.position_top_left_croner = pos - self.start_pos
-        print('position_top_left_croner: ', self.id, self.position_top_left_croner)
-        self.start_pos = pos
-
-    # after button object is created with position (0,0) the button is moved to its drop destination
-    def create_move(self, pos):
-        self.position_top_left_croner = pos - self.start_pos
-        super().move(pos - self.start_pos)
         self.start_pos = pos
 
     def paintEvent(self, event):

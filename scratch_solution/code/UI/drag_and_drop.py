@@ -50,7 +50,7 @@ class DropArea(QFrame):
                     gatter = NotButton(parent=self, name="-", inList=[], outList=[], start_pos=source.getStartPos(), is_in_drop_area=True)
                 else:
                     QMessageBox.critical(self, "Error", f"Source does not match any instance type.")
-                gatter.create_move(event.pos()) # event.pos is where my mouse is, left corner of gatter will appear there
+                gatter.move(event.pos()) # event.pos is where my mouse is, left corner of gatter will appear there
                 gatter.is_in_drop_area = True
                 gatter.show() # display the new gatter
             elif isinstance(source, GatterButton) and source.is_in_drop_area:
