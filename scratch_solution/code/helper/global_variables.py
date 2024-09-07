@@ -16,7 +16,7 @@ background_color='black'
 droparea_width = 800
 droparea_height = 800
 
-clock_timeout = 2 #sec
+clock_timeout = 1 #sec
 
 #Tic zone
 isTic = False
