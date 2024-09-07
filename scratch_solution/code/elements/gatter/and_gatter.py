@@ -17,7 +17,7 @@ class AndButton(GatterButton):
                     self.outputValue = 0
                     self.informWireAboutStateThread()
 
-                    self.update()
+                  #  self.update()
                     return
             except Exception as e: # catch exception and dont throw error because this happens if old configs are load. there gatter with lists of all future wires are created, but the wire does not exist yet...TODO fix this problem in a pretty way
                 print('Error while updating gatter state: ', e)
@@ -25,4 +25,4 @@ class AndButton(GatterButton):
         self.outputValue = 1
         self.informWireAboutStateThread()
 
-        self.update()
+    #    self.update()

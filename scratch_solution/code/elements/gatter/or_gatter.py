@@ -35,4 +35,4 @@ class OrButton(GatterButton):
 #        for wireId in self.outWire:
 #            wireList[wireId].setState(0)
 
-        self.update()
+     #   self.update()

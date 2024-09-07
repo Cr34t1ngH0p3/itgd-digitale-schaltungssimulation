@@ -14,7 +14,7 @@ from PyQt5.QtWidgets import QWidget
 from PyQt5.QtCore import Qt, QLineF
 from PyQt5.QtGui import QPainter, QPen
 
-from ..helper.global_variables import wireList, gateList, startPoints
+from ..helper.global_variables import wireList, gateList, startPoints, clock_timeout
 from ..helper.functions import globalSimulationRun
 
 
@@ -63,12 +63,12 @@ class Wire(QWidget):
         return self.state
 
     def setState(self, state, force=False):
-        print('set new state: 0', self.id)
         if self.state != state or force:
             self.state = state
-            time.sleep(1)
+            time.sleep(clock_timeout)
             for gatterId in self.endpointGateList:
                 gateList[gatterId].updateState()
+            self.parent().updateUI()
 
     def addOutputGate(self, gateId):
         if gateId not in self.endpointGateList:

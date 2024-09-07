@@ -29,4 +29,4 @@ class NotButton(GatterButton):
         self.informWireAboutStateThread()
 
 
-        self.update()
+     #   self.update()
