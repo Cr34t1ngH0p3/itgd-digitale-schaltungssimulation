@@ -70,7 +70,7 @@ class GatterButton(QLabel):
         self.informWireAboutState()
 
 
-
+# TODO do we have to close threads again / use same thread??
     def informWireAboutStateThread(self):
         print('start clock')
         clock_thread = threading.Thread(target=self.informWireAboutState)
