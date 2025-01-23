@@ -18,24 +18,9 @@ Project to simulate digital circuits with:
 - toggle on / off buttons to On / on and so on...
 - clock input
 
-## Presentation
+# Shortcuts
 
-- (lennard) discussion about how we write the project: c++ ? python ? use bigger package or do it all by ourself?
-
-
-demo ( kirill):
-e.g flip flop and somthing else
-
-- structure / classes
-    - abstract (kirill)
-    - explain some code (lennard)
-    - functionality (lennard)
-    - TODO prettyfy code catch/handle error ....(lennard)
-
-- problem during implementations: (lennard / kirill)
-    - nothing special, inheritage of droparea to child, delete of gatter (deleting in loop), not so good planing for classes -> if adde dnew stuff later it created problems
-
-- Question??
-
-
-
+- Drag and Drop buttons to
+- Right click two gatters to create new wire
+- Right click the wire to remove wires
+- Click mouse 3 on gatter to remove gatter and connected wires
